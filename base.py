@@ -21,17 +21,23 @@ class Base:
         gluPerspective(45, (self.width/self.height), 0.1, 200.0)
         glTranslatef(0,0,0)
         glEnable(GL_DEPTH_TEST)
-        #glRotatef(45,1,0,0)
         self.clock = pygame.time.Clock()
         self.FPS = 60
         self.on = True
 
         self.ogl = Graphics()
 
-        #cube = Cube(6,6,6,0,0,-30)
-        #cube.setColor((0,255,0))
-        #self.ogl.AddObject(cube, "basic", "Cube 1")
-        py1 = PhysicObject(2.0,2.0,2.0,0.0,0.0,-50.0,10.0,(0,255,0),"object 1",self.ogl)
+        cube = Cube(6,6,6,7,0,-30)
+        cube.setColor(0,255,0)
+        cube.setRotation(45,0,0,1)
+        self.ogl.AddObject(cube, "basic", "Cube 1")
+
+        ellipsoid = Ellipsoid(6,4,2,-7,0,-35)
+        ellipsoid.setColor(255,0,0)
+        ellipsoid.setFilled(False)
+        self.ogl.AddObject(ellipsoid, "ellipsoid", "ell 1")
+
+        """py1 = PhysicObject(2.0,2.0,2.0,0.0,0.0,-50.0,10.0,(0,255,0),"object 1",self.ogl)
         py2 = PhysicObject(2.0,2.0,2.0,0.0,0.0,-70.0,10000.0,(255,0,0),"object 2",self.ogl)
         py3 = PhysicObject(2.0,2.0,2.0,5.0,0.0,-70.0,10.0,(0,0,255),"object 3",self.ogl)
 
@@ -48,6 +54,7 @@ class Base:
             pyx = PhysicObject(2.0,2.0,2.0,RR(20000)/10000.0,RR(20000)/10000.0,-70.0,10.0,color,name,self.ogl)
             pyx.SetSpeed(-0.0000000001,0.0000000002,0)
             self.ogl.AddObject( pyx , "PhysicObj" , name + "####" )
+        """
     def refresh(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -15,10 +15,45 @@ class Object:
         self.name = 'Unnamed #' + RS(100000)
         self.visible = True
         self.dead = False
-    def refresh(self):
-        ## code to draw ##
+        self.rotation = False
+        self.color = False
+        self.filled = True
+        self.manualPosition = False
+        self.manualRotation = False
+        self.manualColor    = False
+        self.manualFill     = False
+    def setX(self,x):
+        self.x = x
+    def setY(self,y):
+        self.y = y
+    def setZ(self,z):
+        self.z = z
+    def setRotation(self, angle, x, y, z):
+        self.rotation = [angle, x, y, z]
+    def setColor(self, r, g, b):
+        self.color = (r,g,b)
+    def setFilled(self, is_filled):
+        self.filled = is_filled
+    def blit(self):
+        ### Should be replaced with the heritage's blit function ###
         pass
-
+    def refresh(self):
+        glPushMatrix()
+        if not self.manualPosition:
+            glTranslatef(self.x,self.y,self.z)
+        if not self.manualRotation:
+            if self.rotation != False:
+                glRotatef(*self.rotation)
+        if not self.manualColor:
+            if self.color != False:
+                glColor3fv(self.color)
+        if not self.manualFill:
+            second_parameter = GL_FILL
+            if not self.filled:
+                second_parameter = GL_LINE
+            glPolygonMode(GL_FRONT_AND_BACK, second_parameter)
+        self.blit()
+        glPopMatrix()
 
 class Texture:
     def __init__(self):
@@ -54,24 +89,6 @@ class Graphics:
             self.objects[x].refresh()
     def QueryAllOfType(self , type):
         return self.types[type]
-    def DrawEllipsoid(self, uiStacks, uiSlices, fA, fB, fC, filled = True):
-        Pi = 3.1416
-        tStep = Pi / uiSlices
-        sStep = Pi / uiStacks
-        second_parameter = GL_FILL
-        if not filled:
-            second_parameter = GL_LINE
-        glPolygonMode(GL_FRONT_AND_BACK, second_parameter)
-        t = -Pi/2
-        while (t <= (Pi/2)+.0001):
-            glBegin(GL_TRIANGLE_STRIP)
-            s = -Pi
-            while (s <= Pi+.0001):
-                glVertex3f(fA * math.cos(t) * math.cos(s), fB * math.cos(t) * math.sin(s), fC * math.sin(t))
-                glVertex3f(fA * math.cos(t+tStep) * math.cos(s), fB * math.cos(t+tStep) * math.sin(s), fC * math.sin(t+tStep))
-                s += sStep
-            glEnd()
-            t += tStep
     def GenerateTexture(self,surface):
         textureData = pygame.image.tostring(surface, "RGBA", 1)
         width = surface.get_width()
@@ -102,9 +119,7 @@ class Graphics:
         glDisable( GL_TEXTURE_2D )
 
 class Cube(Object):
-    def setColor(self, color):
-        self.color = color
-    def refresh(self):
+    def blit(self):
         w = self.width / 2
         h = self.height / 2
         d = self.depth / 2
@@ -141,8 +156,6 @@ class Cube(Object):
             (1,5,7,2),
             (4,0,3,6)
         )
-        glPushMatrix()
-        glTranslatef(self.x,self.y,self.z)
         glBegin(GL_QUADS)
 
         for surface in surfaces:
@@ -160,4 +173,26 @@ class Cube(Object):
                 glColor3fv((0,0,0))
                 glVertex3fv(vertices[vertex])
         glEnd()
-        glPopMatrix()
+
+class Ellipsoid(Object):
+    def __init__(self,width,height,depth,x,y,z):
+        Object.__init__(self,width,height,depth,x,y,z)
+        self.uiStacks = 10
+        self.uiSlices = 10
+    def setQuality(self, quality):
+        self.uiStacks = quality
+        self.uiSlices = quality
+    def blit(self):
+        Pi = 3.1416
+        tStep = Pi / self.uiSlices
+        sStep = Pi / self.uiStacks
+        t = -Pi/2
+        while (t <= (Pi/2)+.0001):
+            glBegin(GL_TRIANGLE_STRIP)
+            s = -Pi
+            while (s <= Pi+.0001):
+                glVertex3f(self.width * math.cos(t) * math.cos(s), self.height * math.cos(t) * math.sin(s), self.depth * math.sin(t))
+                glVertex3f(self.width * math.cos(t+tStep) * math.cos(s), self.height * math.cos(t+tStep) * math.sin(s), self.depth * math.sin(t+tStep))
+                s += sStep
+            glEnd()
+            t += tStep
