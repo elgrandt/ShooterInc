@@ -1,5 +1,6 @@
 __author__ = 'Dylan'
 from OpenGL.GL import *
+from OpenGL.GLU import *
 import math
 import pygame
 from macros import *
@@ -38,22 +39,93 @@ class Object:
         ### Should be replaced with the heritage's blit function ###
         pass
     def refresh(self):
-        glPushMatrix()
-        if not self.manualPosition:
-            glTranslatef(self.x,self.y,self.z)
-        if not self.manualRotation:
-            if self.rotation != False:
-                glRotatef(*self.rotation)
-        if not self.manualColor:
-            if self.color != False:
-                glColor3fv(self.color)
-        if not self.manualFill:
-            second_parameter = GL_FILL
-            if not self.filled:
-                second_parameter = GL_LINE
-            glPolygonMode(GL_FRONT_AND_BACK, second_parameter)
-        self.blit()
-        glPopMatrix()
+        if self.visible and not self.dead:
+            glPushMatrix()
+            if not self.manualPosition:
+                glTranslatef(self.x,self.y,self.z)
+            if not self.manualRotation:
+                if self.rotation != False:
+                    glRotatef(*self.rotation)
+            if not self.manualColor:
+                if self.color != False:
+                    glColor3fv(self.color)
+            if not self.manualFill:
+                second_parameter = GL_FILL
+                if not self.filled:
+                    second_parameter = GL_LINE
+                glPolygonMode(GL_FRONT_AND_BACK, second_parameter)
+            self.blit()
+            glPopMatrix()
+
+class Object2D:
+    def __init__(self, x, y):
+        self.width = -1
+        self.height = -1
+        self.x = x
+        self.y = y
+        self.name = "Unnamed #" + RS(100000)
+        self.visible = True
+        self.dead = False
+        self.surface = None
+        self.autoblit = True
+    def setX(self,x):
+        self.x = x
+    def setY(self,y):
+        self.y = y
+    def setSurface(self, surface):
+        self.surface = surface
+    def generateTexture(self,surface):
+        textureData = pygame.image.tostring(surface, "RGBA", 1)
+        width = surface.get_width()
+        height = surface.get_height()
+
+        texture = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, texture)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+
+        ret = Texture()
+        ret.width = width
+        ret.height = height
+        ret.texture = texture
+        return ret
+    def blitTexture(self, texture, w, h, x, y, rx = 1, ry = 1):
+        glBindTexture( GL_TEXTURE_2D, texture )
+        glEnable( GL_TEXTURE_2D )
+
+        glBegin(GL_QUADS)
+        glTexCoord2f(   0,   0 );  glVertex2f(x    ,  y    )
+        glTexCoord2f(rx  ,   0 );  glVertex2f(x + w,  y    )
+        glTexCoord2f(rx  ,  -ry);  glVertex2f(x + w,  y + h)
+        glTexCoord2f(0   ,  -ry);  glVertex2f(x    ,  y + h)
+        glEnd()
+        glDisable( GL_TEXTURE_2D )
+    def blitSurface(self , x=-1 , y=-1 , w=-1 , h=-1 , rx=1 , ry=1):
+        if self.surface != None:
+            if x == -1:
+                x = self.x
+            if y == -1:
+                y = self.y
+            if w == -1:
+                w = self.width
+                if self.width == -1:
+                    w = self.surface.get_size()[0]
+            if h == -1:
+                h = self.height
+                if self.height == -1:
+                    h = self.surface.get_size()[1]
+            texture = self.generateTexture(self.surface)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+            self.blitTexture(texture.texture, w, h, x, y, rx, ry)
+    def blit(self):
+        pass
+    def refresh(self):
+        if self.visible and not self.dead:
+            self.blit()
+            if self.autoblit:
+                self.blitSurface()
+
 
 class Texture:
     def __init__(self):
@@ -64,6 +136,7 @@ class Texture:
 class Graphics:
     def __init__(self):
         self.objects = dict()
+        self.objects2d = dict()
         self.types = dict() ###
     def AddObject(self , object , type, name):
         object.name = name
@@ -84,39 +157,31 @@ class Graphics:
             if self.objects[type][x].name == name:
                 del self.objects[type][x]
                 return 0
+    def Add2D(self , object , name):
+        object.name = name
+        self.objects2d[name] = object
+    def Delete2D(self , name):
+        self.objects2d[name].dead = True
+        del self.objects2d[name]
     def refresh(self):
+        gluPerspective(45, (SSIZE()[0]/SSIZE()[1]), 0.1, 200.0)
+        glEnable(GL_DEPTH_TEST)
         for x in self.objects.keys():
             self.objects[x].refresh()
+        glDisable(GL_DEPTH_TEST)
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glOrtho(0.0, SSIZE()[0], SSIZE()[1], 0.0, -1.0, 10.0)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT|GL_ACCUM_BUFFER_BIT)
+        for x in self.objects2d.keys():
+            self.objects2d[x].refresh()
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glMatrixMode(GL_MODELVIEW)
     def QueryAllOfType(self , type):
         return self.types[type]
-    def GenerateTexture(self,surface):
-        textureData = pygame.image.tostring(surface, "RGBA", 1)
-        width = surface.get_width()
-        height = surface.get_height()
-
-        texture = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, texture)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
-
-        ret = Texture()
-        ret.width = width
-        ret.height = height
-        ret.texture = texture
-        return ret
-    def BlitTexture(self, texture, w, h, x, y, rx = 1, ry = 1):
-        glBindTexture( GL_TEXTURE_2D, texture )
-        glEnable( GL_TEXTURE_2D )
-
-        glBegin(GL_QUADS)
-        glTexCoord2f(   0,   0 );  glVertex2f(x    ,  y )
-        glTexCoord2f(rx  ,   0 );  glVertex2f(x + w,  y )
-        glTexCoord2f(rx  ,  -ry);  glVertex2f(x + w,  y + h)
-        glTexCoord2f(0   ,  -ry);  glVertex2f(x    ,  y + h)
-        glEnd()
-
-        glDisable( GL_TEXTURE_2D )
 
 class Cube(Object):
     def blit(self):

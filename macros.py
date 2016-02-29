@@ -21,3 +21,6 @@ def RD(x):
 
 def RS(max):
     return str(RR(max))
+
+def SSIZE():
+    return pygame.display.get_surface().get_size()

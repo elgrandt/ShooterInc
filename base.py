@@ -20,7 +20,6 @@ class Base:
         pygame.display.set_caption(caption)
         gluPerspective(45, (self.width/self.height), 0.1, 200.0)
         glTranslatef(0,0,0)
-        glEnable(GL_DEPTH_TEST)
         self.clock = pygame.time.Clock()
         self.FPS = 60
         self.on = True
@@ -36,6 +35,11 @@ class Base:
         ellipsoid.setColor(255,0,0)
         ellipsoid.setFilled(False)
         self.ogl.AddObject(ellipsoid, "ellipsoid", "ell 1")
+
+        test2d = Object2D(20,20)
+        surface = pygame.transform.scale(pygame.image.load("test.png"),(300,200))
+        test2d.setSurface(surface)
+        self.ogl.Add2D(test2d,"Test 2D")
 
         """py1 = PhysicObject(2.0,2.0,2.0,0.0,0.0,-50.0,10.0,(0,255,0),"object 1",self.ogl)
         py2 = PhysicObject(2.0,2.0,2.0,0.0,0.0,-70.0,10000.0,(255,0,0),"object 2",self.ogl)
