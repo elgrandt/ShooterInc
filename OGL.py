@@ -67,6 +67,7 @@ class Object2D:
         self.visible = True
         self.dead = False
         self.surface = None
+        self.texture = None
         self.autoblit = True
     def setX(self,x):
         self.x = x
@@ -74,6 +75,7 @@ class Object2D:
         self.y = y
     def setSurface(self, surface):
         self.surface = surface
+        self.texture = self.generateTexture(surface)
     def generateTexture(self,surface):
         textureData = pygame.image.tostring(surface, "RGBA", 1)
         width = surface.get_width()
@@ -83,18 +85,20 @@ class Object2D:
         glBindTexture(GL_TEXTURE_2D, texture)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
 
-        ret = Texture()
-        ret.width = width
-        ret.height = height
-        ret.texture = texture
-        return ret
+        return texture
     def blitTexture(self, texture, w, h, x, y, rx = 1, ry = 1):
+        if texture == None:
+            return
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
         glBindTexture( GL_TEXTURE_2D, texture )
         glEnable( GL_TEXTURE_2D )
 
         glBegin(GL_QUADS)
+        glColor4f(255,255,255,255)
         glTexCoord2f(   0,   0 );  glVertex2f(x    ,  y    )
         glTexCoord2f(rx  ,   0 );  glVertex2f(x + w,  y    )
         glTexCoord2f(rx  ,  -ry);  glVertex2f(x + w,  y + h)
@@ -115,9 +119,7 @@ class Object2D:
                 h = self.height
                 if self.height == -1:
                     h = self.surface.get_size()[1]
-            texture = self.generateTexture(self.surface)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-            self.blitTexture(texture.texture, w, h, x, y, rx, ry)
+            self.blitTexture(self.texture, w, h, x, y, rx, ry)
     def blit(self):
         pass
     def refresh(self):
@@ -174,8 +176,8 @@ class Graphics:
         glOrtho(0.0, SSIZE()[0], SSIZE()[1], 0.0, -1.0, 10.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT|GL_ACCUM_BUFFER_BIT)
         for x in self.objects2d.keys():
+            glLoadIdentity()
             self.objects2d[x].refresh()
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()

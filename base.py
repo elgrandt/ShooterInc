@@ -34,10 +34,12 @@ class Base:
         ellipsoid = Ellipsoid(6,4,2,-7,0,-35)
         ellipsoid.setColor(255,0,0)
         ellipsoid.setFilled(False)
+        ellipsoid.setQuality(20)
         self.ogl.AddObject(ellipsoid, "ellipsoid", "ell 1")
 
         test2d = Object2D(20,20)
-        surface = pygame.transform.scale(pygame.image.load("test.png"),(300,200))
+        surface = pygame.Surface((300,200))
+        surface.fill((255,100,0))
         test2d.setSurface(surface)
         self.ogl.Add2D(test2d,"Test 2D")
 
