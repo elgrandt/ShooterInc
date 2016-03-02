@@ -29,6 +29,8 @@ class Object:
         self.y = y
     def setZ(self,z):
         self.z = z
+    def setPos(self,x,y,z):
+        self.x, self.y, self.z = x,y,z
     def setRotation(self, angle, x, y, z):
         self.rotation = [angle, x, y, z]
     def setColor(self, r, g, b):
@@ -37,6 +39,8 @@ class Object:
         self.filled = is_filled
     def blit(self):
         ### Should be replaced with the heritage's blit function ###
+        pass
+    def logic(self):
         pass
     def refresh(self):
         if self.visible and not self.dead:
@@ -56,6 +60,7 @@ class Object:
                 glPolygonMode(GL_FRONT_AND_BACK, second_parameter)
             self.blit()
             glPopMatrix()
+        self.logic()
 
 class Object2D:
     def __init__(self, x, y):
@@ -128,6 +133,18 @@ class Object2D:
             if self.autoblit:
                 self.blitSurface()
 
+class ComplexObject(Object):
+    def __init__(self,x,y,z):
+        Object.__init__(self,0,0,0,x,y,z)
+        self.visible = False
+        self.objects = dict()
+    def addObject(self, object, name):
+        object.name = name
+        self.objects[name] = object
+    def logic(self):
+        glTranslatef(self.x,self.y,self.z)
+        for x in self.objects.keys():
+            self.objects[x].refresh()
 
 class Texture:
     def __init__(self):

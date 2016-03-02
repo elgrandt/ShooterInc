@@ -9,7 +9,7 @@ import time
 from macros import *
 import math
 from test_gravitation import *
-from random import randrange as RR
+from objects import enemy
 
 class Base:
     def __init__(self , width , height , caption):
@@ -19,26 +19,17 @@ class Base:
         pygame.display.set_mode((width ,height) , DOUBLEBUF|OPENGL)
         pygame.display.set_caption(caption)
         gluPerspective(45, (self.width/self.height), 0.1, 200.0)
-        glTranslatef(0,0,0)
         self.clock = pygame.time.Clock()
         self.FPS = 60
         self.on = True
 
         self.ogl = Graphics()
 
-        cube = Cube(6,6,6,7,0,-30)
-        cube.setColor(0,255,0)
-        cube.setRotation(45,0,0,1)
-        self.ogl.AddObject(cube, "basic", "Cube 1")
-
-        ellipsoid = Ellipsoid(6,4,2,-7,0,-35)
-        ellipsoid.setColor(255,0,0)
-        ellipsoid.setFilled(False)
-        ellipsoid.setQuality(20)
-        self.ogl.AddObject(ellipsoid, "ellipsoid", "ell 1")
+        en1 = enemy.BasicEnemy(0,-10,-20)
+        self.ogl.AddObject(en1, "Enemy","Enemy 1")
 
         test2d = Object2D(20,20)
-        surface = pygame.Surface((300,200))
+        surface = pygame.Surface((100,100))
         surface.fill((255,100,0))
         test2d.setSurface(surface)
         self.ogl.Add2D(test2d,"Test 2D")
