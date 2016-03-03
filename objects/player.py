@@ -5,12 +5,22 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import pygame
 
+class Ak47(OGL.Cube):
+    def __init__(self):
+        OGL.Cube.__init__(self,3,1,0.3,0,0,-10)
+        self.setColor(100,100,100)
+        self.setFilled(True)
+    def logic(self):
+        pass
+
 class Player(OGL.ComplexObject):
     def __init__(self):
         OGL.ComplexObject.__init__(self,0,0,0)
         self.speed = .3
         self.angle = 0
         self.angle_speed = 0.1
+        primary_weapon = Ak47()
+        self.addObject(primary_weapon,"Primary Weapon")
     def logic(self):
         self.angle -= (MPOS()[0] - SSIZE()[0]/2) * self.angle_speed
         if (self.angle < -180):

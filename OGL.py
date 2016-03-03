@@ -43,6 +43,7 @@ class Object:
     def logic(self):
         pass
     def refresh(self):
+        self.logic()
         if self.visible and not self.dead:
             glPushMatrix()
             if not self.manualPosition:
@@ -60,7 +61,6 @@ class Object:
                 glPolygonMode(GL_FRONT_AND_BACK, second_parameter)
             self.blit()
             glPopMatrix()
-        self.logic()
 
 class Object2D:
     def __init__(self, x, y):
@@ -141,10 +141,12 @@ class ComplexObject(Object):
     def addObject(self, object, name):
         object.name = name
         self.objects[name] = object
-    def logic(self):
+    def refresh(self):
+        self.logic()
         glTranslatef(self.x,self.y,self.z)
         for x in self.objects.keys():
             self.objects[x].refresh()
+        glTranslatef(-self.x,-self.y,-self.z)
 
 class Texture:
     def __init__(self):
@@ -209,9 +211,9 @@ class Graphics:
 
 class Cube(Object):
     def blit(self):
-        w = self.width / 2
-        h = self.height / 2
-        d = self.depth / 2
+        w = self.width / 2.0
+        h = self.height / 2.0
+        d = self.depth / 2.0
         vertices= (
         (w, -h, -d),
         (w, h, -d),
