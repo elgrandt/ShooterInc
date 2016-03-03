@@ -9,7 +9,7 @@ import time
 from macros import *
 import math
 from test_gravitation import *
-from objects import enemy
+from objects import enemy, player
 
 class Base:
     def __init__(self , width , height , caption):
@@ -25,7 +25,10 @@ class Base:
 
         self.ogl = Graphics()
 
-        en1 = enemy.BasicEnemy(0,-10,-20)
+        player1 = player.Player()
+        self.ogl.AddObject(player1,"Player","Main Player")
+
+        en1 = enemy.BasicEnemy(0,0,-20)
         self.ogl.AddObject(en1, "Enemy","Enemy 1")
 
         test2d = Object2D(20,20)

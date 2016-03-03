@@ -167,7 +167,10 @@ class Graphics:
             self.types[type] = []
         self.types[type].append( object )
     def GetObject(self,name):
-        return self.objects[name]
+        if name in self.objects.keys():
+            return self.objects[name]
+        else:
+            return None
     def Delete(self , name):
         self.objects[name].dead = True
         type = self.objects[name].type
@@ -185,6 +188,9 @@ class Graphics:
     def refresh(self):
         gluPerspective(45, (SSIZE()[0]/SSIZE()[1]), 0.1, 200.0)
         glEnable(GL_DEPTH_TEST)
+        player = self.GetObject("Main Player")
+        if player != None:
+            gluLookAt(player.x,player.y,player.z,player.x,player.y,player.z-20,0,1,0)
         for x in self.objects.keys():
             self.objects[x].refresh()
         glDisable(GL_DEPTH_TEST)
