@@ -188,7 +188,6 @@ class Graphics:
     def refresh(self):
         gluPerspective(45, (SSIZE()[0]/SSIZE()[1]), 0.1, 200.0)
         glEnable(GL_DEPTH_TEST)
-        player = self.GetObject("Main Player")
         #if player != None:
         #    gluLookAt(player.x, player.y, player.z, player.x + math.sin(math.radians(player.angle))*20, player.y, player.z - math.cos(math.radians(player.angle))*20, 0,1,0)
         for x in self.objects.keys():

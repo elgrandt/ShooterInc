@@ -3,37 +3,34 @@ from macros import *
 from math import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
+import pygame
 
 class Player(OGL.ComplexObject):
     def __init__(self):
         OGL.ComplexObject.__init__(self,0,0,0)
         self.speed = .3
         self.angle = 0
-
-
+        self.angle_speed = 0.1
     def logic(self):
-        if KEY(pygame.K_LEFT):
+        self.angle -= (MPOS()[0] - SSIZE()[0]/2) * self.angle_speed
+        if (self.angle < -180):
+            self.angle = 180
+        if self.angle > 180:
+            self.angle = -180
+        pygame.mouse.set_pos(SSIZE()[0]/2,SSIZE()[1]/2)
+        pygame.mouse.set_visible(False)
+        if KEY(pygame.K_a):
             self.x -= self.speed * cos(radians(self.angle))
             self.z += self.speed * sin(radians(self.angle))
-        if KEY(pygame.K_RIGHT):
+        if KEY(pygame.K_d):
             self.x += self.speed * cos(radians(self.angle))
             self.z -= self.speed * sin(radians(self.angle))
-        if KEY(pygame.K_UP):
+        if KEY(pygame.K_w):
             self.x -= self.speed * sin(radians(self.angle))
             self.z -= self.speed * cos(radians(self.angle))
-        if KEY(pygame.K_DOWN):
+        if KEY(pygame.K_s):
             self.x += self.speed * sin(radians(self.angle))
             self.z += self.speed * cos(radians(self.angle))
-        if KEY(pygame.K_a):
-            self.angle -= 1
-            if (self.angle < -180):
-                self.angle = 180
-        if KEY(pygame.K_d):
-            self.angle += 1
-            if self.angle > 180:
-                self.angle = -180
-        print self.angle
         plus_a = sin(radians(self.angle))
         plus_b = cos(radians(self.angle))
-        print plus_a , plus_b
         gluLookAt( self.x , self.y , self.z , self.x - plus_a, self.y , self.z - plus_b , 0 , 1 , 0)
