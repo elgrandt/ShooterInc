@@ -1,8 +1,12 @@
 import OGL
 from macros import *
+<<<<<<< HEAD
 from math import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
+=======
+import math
+>>>>>>> 8f2e28495a61196ff3c848b7c352838f3d1aae61
 
 class Player(OGL.ComplexObject):
     def __init__(self):
@@ -24,6 +28,7 @@ class Player(OGL.ComplexObject):
             self.angle -= 0.1
             self.angle = (self.angle+360)%360
         if KEY(pygame.K_d):
+<<<<<<< HEAD
             self.angle += 0.1
             self.angle = (self.angle+360) % 360
 
@@ -31,3 +36,8 @@ class Player(OGL.ComplexObject):
         plus_b = cos(self.angle) * 20;
         print plus_a , plus_b
         gluLookAt( self.x , self.y , self.z , self.x - plus_a, self.y , self.z - plus_b , 0 , 1 , 0)
+=======
+            self.angle += 1
+        if self.angle > 360:
+            self.angle = 0
+>>>>>>> 8f2e28495a61196ff3c848b7c352838f3d1aae61

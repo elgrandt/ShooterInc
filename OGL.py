@@ -190,7 +190,7 @@ class Graphics:
         glEnable(GL_DEPTH_TEST)
         player = self.GetObject("Main Player")
         if player != None:
-            gluLookAt(player.x,player.y,player.z,player.x,player.y,player.z-20,0,1,0)
+            gluLookAt(player.x, player.y, player.z, player.x + math.sin(math.radians(player.angle))*20, player.y, player.z - math.cos(math.radians(player.angle))*20, 0,1,0)
         for x in self.objects.keys():
             self.objects[x].refresh()
         glDisable(GL_DEPTH_TEST)
