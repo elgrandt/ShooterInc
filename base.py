@@ -31,6 +31,9 @@ class Base:
         en1 = enemy.BasicEnemy(0,0,-20)
         self.ogl.AddObject(en1, "Enemy","Enemy 1")
 
+        en2 = enemy.BasicEnemy(-10,0,-20)
+        self.ogl.AddObject(en2, "Enemy","Enemy 2")
+
         test2d = Object2D(20,20)
         surface = pygame.Surface((100,100))
         surface.fill((255,100,0))

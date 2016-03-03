@@ -13,21 +13,25 @@ class Player(OGL.ComplexObject):
 
     def logic(self):
         if KEY(pygame.K_LEFT):
-            self.x -= self.speed
+            self.x -= self.speed * cos(radians(self.angle))
+            self.z -= self.speed * sin(radians(self.angle))
         if KEY(pygame.K_RIGHT):
-            self.x += self.speed
+            self.x += self.speed * cos(radians(self.angle))
+            self.z += self.speed * sin(radians(self.angle))
         if KEY(pygame.K_UP):
             self.z -= self.speed
         if KEY(pygame.K_DOWN):
             self.z += self.speed
         if KEY(pygame.K_a):
-            self.angle -= 0.1
-            self.angle = (self.angle+360)%360
+            self.angle -= 1
+            if (self.angle < -180):
+                self.angle = 180
         if KEY(pygame.K_d):
-            self.angle += 0.1
-            self.angle = (self.angle+360) % 360
-
-        plus_a = sin(self.angle) * 20;
-        plus_b = cos(self.angle) * 20;
+            self.angle += 1
+            if self.angle > 180:
+                self.angle = -180
+        print self.angle
+        plus_a = sin(radians(self.angle)) * 20;
+        plus_b = cos(radians(self.angle)) * 20;
         print plus_a , plus_b
         gluLookAt( self.x , self.y , self.z , self.x - plus_a, self.y , self.z - plus_b , 0 , 1 , 0)
