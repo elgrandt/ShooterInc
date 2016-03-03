@@ -1,5 +1,6 @@
 import OGL
 from macros import *
+import math
 
 class Player(OGL.ComplexObject):
     def __init__(self):
@@ -19,3 +20,5 @@ class Player(OGL.ComplexObject):
             self.angle -= 1
         if KEY(pygame.K_d):
             self.angle += 1
+        if self.angle > 360:
+            self.angle = 0
