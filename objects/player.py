@@ -19,9 +19,11 @@ class Player(OGL.ComplexObject):
             self.x += self.speed * cos(radians(self.angle))
             self.z -= self.speed * sin(radians(self.angle))
         if KEY(pygame.K_UP):
-            self.z -= self.speed
+            self.x -= self.speed * sin(radians(self.angle))
+            self.z -= self.speed * cos(radians(self.angle))
         if KEY(pygame.K_DOWN):
-            self.z += self.speed
+            self.x += self.speed * sin(radians(self.angle))
+            self.z += self.speed * cos(radians(self.angle))
         if KEY(pygame.K_a):
             self.angle -= 1
             if (self.angle < -180):
