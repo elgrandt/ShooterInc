@@ -7,16 +7,14 @@ import pygame
 
 class Ak47(OGL.Cube):
     def __init__(self):
-        OGL.Cube.__init__(self,.3,.1,.03,0,0,-1)
+        OGL.Cube.__init__(self,.5,.15,.04,.3,-.3,-1)
         self.setColor(100,100,100)
         self.setFilled(True)
-        self.real_pos = 0,0,-1
         self.mode = "Standby" # Modes Standby and Shooting
     def logic(self):
-        print self.x, self.y, self.z
         if self.mode == "Standby":
-            self.setRotationZ(-45)
-            self.rotationY -= 45
+            self.setRotationZ(-25)
+            self.rotationY -= 35
 
 class Player(OGL.ComplexObject):
     def __init__(self):
@@ -53,5 +51,5 @@ class Player(OGL.ComplexObject):
         gluLookAt( self.x , self.y , self.z , self.x - plus_a, self.y , self.z - plus_b , 0 , 1 , 0)
 
         for obj in self.static_objects:
-            obj.setPos( 1 * sin(radians(-self.angle)), 0, -1 * cos(radians(-self.angle)))
+            obj.setPos( -obj.real_pos[2] * sin(radians(-self.angle)) + obj.real_pos[0] * cos(radians(-self.angle)), obj.real_pos[1], obj.real_pos[2] * cos(radians(-self.angle)) + obj.real_pos[0] * sin(radians(-self.angle)))
             obj.setRotationY(self.angle)
