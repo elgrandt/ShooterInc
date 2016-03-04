@@ -16,7 +16,9 @@ class Object:
         self.name = 'Unnamed #' + RS(100000)
         self.visible = True
         self.dead = False
-        self.rotation = False
+        self.rotationX = False
+        self.rotationY = False
+        self.rotationZ = False
         self.color = False
         self.filled = True
         self.manualPosition = False
@@ -31,16 +33,22 @@ class Object:
         self.z = z
     def setPos(self,x,y,z):
         self.x, self.y, self.z = x,y,z
-    def setRotation(self, angle, x, y, z):
-        self.rotation = [angle, x, y, z]
+    def setRotationX(self, angle):
+        self.rotationX = angle
+    def setRotationY(self, angle):
+        self.rotationY = angle
+    def setRotationZ(self, angle):
+        self.rotationZ = angle
     def setColor(self, r, g, b):
-        self.color = (r,g,b)
+        self.color = (r/255.0,g/255.0,b/255.0)
     def setFilled(self, is_filled):
         self.filled = is_filled
     def blit(self):
         ### Should be replaced with the heritage's blit function ###
         pass
     def logic(self):
+        pass
+    def logic2(self):
         pass
     def refresh(self):
         self.logic()
@@ -49,8 +57,12 @@ class Object:
             if not self.manualPosition:
                 glTranslatef(self.x,self.y,self.z)
             if not self.manualRotation:
-                if self.rotation != False:
-                    glRotatef(*self.rotation)
+                if self.rotationX != False:
+                    glRotatef(self.rotationX,1,0,0)
+                if self.rotationY != False:
+                    glRotatef(self.rotationY,0,1,0)
+                if self.rotationZ != False:
+                    glRotatef(self.rotationZ,0,0,1)
             if not self.manualColor:
                 if self.color != False:
                     glColor3fv(self.color)
@@ -61,6 +73,7 @@ class Object:
                 glPolygonMode(GL_FRONT_AND_BACK, second_parameter)
             self.blit()
             glPopMatrix()
+        self.logic2()
 
 class Object2D:
     def __init__(self, x, y):
