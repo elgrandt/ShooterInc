@@ -8,8 +8,8 @@ import shoot
 
 class Ak47(OGL.Cube):
     def __init__(self):
-        self.standby_pos = [.3,-.25,-1]
-        self.pointing_pos = [0,-.25,-1]
+        self.standby_pos = [.4,-1,-3]#[.3,-.25,-1]
+        self.pointing_pos = [0,-1,-3]#[0,-.25,-1]
         OGL.Cube.__init__(self,.5,.3,.1,*self.standby_pos)
         self.setColor(100,100,100)
         self.setFilled(True)
@@ -17,6 +17,7 @@ class Ak47(OGL.Cube):
         self.transition_time = 10.0
         self.actual_rotation_y = 0.0
         self.actual_rotation_z = -25
+        self.model = OGL.OBJ("models/Handgun_obj.obj",swapyz=False)
     def logic(self):
         pressing2 = pygame.mouse.get_pressed()[2]
         if self.mode == "Standby":
@@ -49,6 +50,9 @@ class Ak47(OGL.Cube):
                 self.real_pos = self.standby_pos[:]
         self.rotationY -= self.actual_rotation_y
         self.setRotationZ(self.actual_rotation_z)
+    def blit(self):
+        glRotatef(180,0,1,0)
+        glCallList(self.model.gl_list)
 
 class Player(OGL.ComplexObject):
     def __init__(self):
