@@ -19,6 +19,9 @@ def GetRange(s1,s2,e1,e2):
 	else:
 		return [start,end]
 
+def EasyCollide(init , direction , start_prism ,end_prism):
+	Collide(Point(init[0],init[1],init[2]) , Point(direction[0],direction[1],direction[2]) ,Point(start_prism[0],start_prism[1],start_prism[2]),Point(end_prism[0],end_prism[1],end_prism[2]))
+
 def Collide(init , direction , start_prism , end_prism):
 	
 	### get increases
