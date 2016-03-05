@@ -52,8 +52,11 @@ class Ak47(OGL.Cube):
         self.rotationY -= self.actual_rotation_y
         self.setRotationZ(self.actual_rotation_z)
     def blit(self):
-        glRotatef(180,0,1,0)
-        glCallList(self.model.gl_list)
+        for x in self.model.objects.keys():
+            self.model.objects[x].angley = 180
+        self.model.blit()
+        #glRotatef(180,0,1,0)
+        #glCallList(self.model.gl_list)
 
 class Player(OGL.ComplexObject):
     def __init__(self):

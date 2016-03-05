@@ -4,6 +4,7 @@ from OpenGL.GLU import *
 import math
 import pygame
 from macros import *
+import copy
 
 class Object:
     def __init__(self , width , height , depth , x , y , z):
@@ -336,19 +337,34 @@ def MTL(filename):
                 GL_LINEAR)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA,
                 GL_UNSIGNED_BYTE, image)
+        elif values[0] == 'map_Bump' or values[0] == 'map_Ks':
+            pass
         else:
             mtl[values[0]] = map(float, values[1:])
     return contents
 
-class OBJ:
-    def __init__(self, filename, swapyz=False):
-        """Loads a Wavefront OBJ file. """
+class ModelObject:
+    def __init__(self):
+        self.name = ""
         self.vertices = []
         self.normals = []
         self.texcoords = []
         self.faces = []
+        self.mtl = None
+        self.list = None
+        self.pos = 0,0,0
+        self.anglex = 0
+        self.angley = 0
+        self.anglez = 0
 
+class OBJ:
+    def __init__(self, filename, swapyz=False):
+        """Loads a Wavefront OBJ file. """
+        self.objects = {}
+
+        actual_object = ModelObject()
         material = None
+        mtl = None
         for line in open(filename, "r"):
             if line.startswith('#'): continue
             values = line.split()
@@ -357,18 +373,18 @@ class OBJ:
                 v = map(float, values[1:4])
                 if swapyz:
                     v = v[0], v[2], v[1]
-                self.vertices.append(v)
+                actual_object.vertices.append(v)
             elif values[0] == 'vn':
                 v = map(float, values[1:4])
                 if swapyz:
                     v = v[0], v[2], v[1]
-                self.normals.append(v)
+                actual_object.normals.append(v)
             elif values[0] == 'vt':
-                self.texcoords.append(map(float, values[1:3]))
+                actual_object.texcoords.append(map(float, values[1:3]))
             elif values[0] in ('usemtl', 'usemat'):
                 material = values[1]
             elif values[0] == 'mtllib':
-                self.mtl = MTL(values[1])
+                mtl = MTL(values[1])
             elif values[0] == 'f':
                 face = []
                 texcoords = []
@@ -384,30 +400,46 @@ class OBJ:
                         norms.append(int(w[2]))
                     else:
                         norms.append(0)
-                self.faces.append((face, norms, texcoords, material))
+                actual_object.faces.append((face, norms, texcoords, material))
+            elif values[0] == 'o':
+                if actual_object.name != "":
+                    actual_object.mtl = mtl
+                    self.objects[actual_object.name] = copy.deepcopy(actual_object)
+                actual_object = ModelObject()
+                actual_object.name = values[1]
+        actual_object.mtl = mtl
+        self.objects[actual_object.name] = copy.deepcopy(actual_object)
 
-        self.gl_list = glGenLists(1)
-        glNewList(self.gl_list, GL_COMPILE)
-        glEnable(GL_TEXTURE_2D)
-        glFrontFace(GL_CCW)
-        for face in self.faces:
-            vertices, normals, texture_coords, material = face
+        for x in self.objects.keys():
+            obj = self.objects[x]
+            print obj
+            gl_list = glGenLists(1)
+            glNewList(gl_list, GL_COMPILE)
+            glEnable(GL_TEXTURE_2D)
+            glFrontFace(GL_CCW)
+            for face in obj.faces:
+                vertices, normals, texture_coords, material = face
 
-            mtl = self.mtl[material]
-            if 'texture_Kd' in mtl:
-                # use diffuse texmap
-                glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
-            else:
-                # just use diffuse colour
-                glColor(*mtl['Kd'])
+                mtl = obj.mtl[material]
+                if 'texture_Kd' in mtl:
+                    # use diffuse texmap
+                    glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
+                else:
+                    # just use diffuse colour
+                    glColor(*mtl['Kd'])
 
-            glBegin(GL_POLYGON)
-            for i in range(len(vertices)):
-                if normals[i] > 0:
-                    glNormal3fv(self.normals[normals[i] - 1])
-                if texture_coords[i] > 0:
-                    glTexCoord2fv(self.texcoords[texture_coords[i] - 1])
-                glVertex3fv(self.vertices[vertices[i] - 1])
-            glEnd()
-        glDisable(GL_TEXTURE_2D)
-        glEndList()
+                glBegin(GL_POLYGON)
+                for i in range(len(vertices)):
+                    if normals[i] > 0:
+                        glNormal3fv(obj.normals[normals[i] - 1])
+                    if texture_coords[i] > 0:
+                        glTexCoord2fv(obj.texcoords[texture_coords[i] - 1])
+                    glVertex3fv(obj.vertices[vertices[i] - 1])
+                glEnd()
+            glDisable(GL_TEXTURE_2D)
+            glEndList()
+    def getObject(self, name):
+        return self.objects[name]
+    def blit(self):
+        for obj in self.objects:
+            glCallList(self.objects[obj].list)
