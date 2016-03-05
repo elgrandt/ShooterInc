@@ -47,5 +47,6 @@ def Collide(init , direction , start_prism , end_prism):
 
 	if range_2 == False:
 		return False
-		
+	if range_2[1] < 0:
+		return False #the collision is on the back. Not valid	
 	return True
