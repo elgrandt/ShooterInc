@@ -13,7 +13,7 @@ class Object:
         self.x = x
         self.y = y
         self.z = z
-        self.real_pos = x,y,z
+        self.real_pos = [x,y,z]
         self.name = 'Unnamed #' + RS(100000)
         self.visible = True
         self.dead = False
