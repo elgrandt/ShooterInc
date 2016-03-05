@@ -158,6 +158,11 @@ class ComplexObject(Object):
     def addObject(self, object, name):
         object.name = name
         self.objects[name] = object
+    def getObject(self,name):
+        if name in self.objects.keys():
+            return self.objects[name]
+        else:
+            return None
     def refresh(self):
         self.logic()
         glTranslatef(self.x,self.y,self.z)
