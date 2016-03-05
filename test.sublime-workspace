@@ -1,0 +1,514 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"or",
+				"order_a"
+			],
+			[
+				"order",
+				"order_b"
+			],
+			[
+				"graph",
+				"graphDisplay"
+			],
+			[
+				"bad",
+				"baudrates"
+			],
+			[
+				"lastP",
+				"last_pressed"
+			],
+			[
+				"hold",
+				"holdTime"
+			],
+			[
+				"last",
+				"lastpresssed"
+			],
+			[
+				"col",
+				"COLSUM"
+			],
+			[
+				"coun",
+				"countD"
+			],
+			[
+				"limit",
+				"limitA"
+			],
+			[
+				"drawM",
+				"drawMark"
+			],
+			[
+				"draw",
+				"drawMarkX"
+			],
+			[
+				"BlitIn",
+				"BlitInCenter"
+			],
+			[
+				"FLAG",
+				"flagcont"
+			],
+			[
+				"cir",
+				"circle"
+			],
+			[
+				"get",
+				"get_pressed"
+			],
+			[
+				"baud",
+				"baudrate"
+			],
+			[
+				"SC",
+				"SCREEN_WIDTH"
+			],
+			[
+				"SCRE",
+				"SCREEN_HEIGHT"
+			],
+			[
+				"SCREE",
+				"SCREEN_WIDTH"
+			],
+			[
+				"rand",
+				"randrange"
+			],
+			[
+				"ra",
+				"random"
+			],
+			[
+				"circl",
+				"circle_y"
+			],
+			[
+				"max",
+				"maxpeople"
+			],
+			[
+				"posit",
+				"position_x"
+			],
+			[
+				"Update",
+				"UpdateVariable"
+			],
+			[
+				"queue",
+				"queue_min"
+			],
+			[
+				"hieh",
+				"heightTotal"
+			],
+			[
+				"hei",
+				"height"
+			],
+			[
+				"random",
+				"randomColor"
+			],
+			[
+				"grap",
+				"graphDisplay"
+			],
+			[
+				"widt",
+				"widthA"
+			],
+			[
+				"varia",
+				"variables"
+			],
+			[
+				"he",
+				"height"
+			],
+			[
+				"width",
+				"widthB"
+			],
+			[
+				"wid",
+				"widthA"
+			],
+			[
+				"buffer",
+				"buffer_string"
+			],
+			[
+				"buff",
+				"buffer_string"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Packages/C++/C++ Single File.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					""
+				],
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					"Build_program"
+				],
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					"parse_test_cases"
+				],
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					"run_custom_test_case"
+				],
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					"CF_submit_solution"
+				]
+			],
+			[
+				"Packages/User/Buggy---Linux/CF.sublime-build",
+				"Build_program"
+			]
+		],
+		[
+			[
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					""
+				],
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					"parse_test_cases"
+				],
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					"run_custom_test_case"
+				],
+				[
+					"Packages/User/Buggy---Linux/CF.sublime-build",
+					"CF_submit_solution"
+				]
+			],
+			[
+				"Packages/User/Buggy---Linux/CF.sublime-build",
+				"Run"
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 404.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/635/B/aprog.cpp",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/635/A/aprog.cpp",
+		"/home/newtonis/ballons/bal.cpp",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/633/A/aprog.cpp",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/629/A/aprog.cpp",
+		"/home/newtonis/SerialGraphicator/0.2/fonts.py",
+		"/home/newtonis/SerialGraphicator/0.2/graph.py",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/template.cpp",
+		"/home/newtonis/USACOFEB/p1/input.in",
+		"/home/newtonis/USACOFEB/p1/balancing.out",
+		"/home/newtonis/USACOFEB/p1/balancing.in",
+		"/home/newtonis/USACOFEB/p1/p1.cpp",
+		"/home/newtonis/SerialGraphicator/graph.py",
+		"/home/newtonis/codeforces/Khaleesi/input.in",
+		"/home/newtonis/codeforces/Khaleesi/output.out",
+		"/home/newtonis/codeforces/Khaleesi/kaleesi.cpp",
+		"/home/newtonis/codeforces/Dicy/dicy.cpp",
+		"/home/newtonis/codeforces/forward/input.in",
+		"/home/newtonis/codeforces/forward/output.out",
+		"/home/newtonis/codeforces/forward/forward.cpp",
+		"/home/newtonis/ClionProjects/SerialGraph/graph.py",
+		"/home/newtonis/ClionProjects/SerialGraph/colors.py",
+		"/home/newtonis/ClionProjects/SerialGraph/fonts.py",
+		"/home/newtonis/ClionProjects/SerialGraph/fonts.pyc",
+		"/home/newtonis/ClionProjects/SerialGraph/images.py",
+		"/home/newtonis/ClionProjects/SerialGraph/serialModule.py",
+		"/home/newtonis/ClionProjects/SerialGraph/test.py",
+		"/home/newtonis/ClionProjects/SerialGraph/test2.py",
+		"/home/newtonis/ClionProjects/SerialGraph/utils.py",
+		"/home/newtonis/ClionProjects/SerialGraph/serialNew.py",
+		"/home/newtonis/SegTreebien.cpp",
+		"/home/newtonis/hack/gen.py",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/628/A/aprog.cpp",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/628/B/aprog.cpp",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/Buggy---Linux/README.md",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/Buggy---Linux/Default (Linux).sublime-keymap",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/Buggy---Linux/CF.sublime-build",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/Buggy---Linux/Main.sublime-menu",
+		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/628/A/round.txt",
+		"/home/newtonis/codeforces/problem628A.cpp"
+	],
+	"find":
+	{
+		"height": 31.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"self.new_hold",
+			"freshvalue",
+			"settle",
+			"print",
+			"Settle",
+			"print ",
+			"AddSett",
+			"button",
+			"print",
+			"10000",
+			"\"color\"",
+			"self.ports[",
+			"ConnectionWindow",
+			"connect",
+			"ConnectionWindow(",
+			"pygame.draw.cir",
+			"self.speed = ",
+			".enabled",
+			"area/2",
+			"		\n",
+			"print ",
+			"print data",
+			"()\n",
+			"print ",
+			"thread.start_new",
+			"thread.start_new_thread",
+			"serialmodul"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 31.0
+	},
+	"input":
+	{
+		"height": 38.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 306.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/User/Buggy---Linux/CF.sublime-build",
+	"project": "shooterInc.sublime-project",
+	"replace":
+	{
+		"height": 58.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
