@@ -95,5 +95,7 @@ class Player(OGL.ComplexObject):
             for en in enemies:
                 start = en.x - en.width/2.0 , en.y - en.height/2.0 , en.z - en.depth/2.0
                 end = en.x + en.width/2.0 , en.y + en.height/2.0 , en.z + en.depth/2.0
+                if en.name == "Enemy 1":
+                    print [self.x,self.y,self.z], pointing, start, end
                 colition = shoot.EasyCollide([self.x,self.y,self.z], pointing, start, end)
                 print colition

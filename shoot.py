@@ -20,10 +20,10 @@ def GetRange(s1,s2,e1,e2):
 		return [start,end]
 
 def EasyCollide(init , direction , start_prism ,end_prism):
-	Collide(Point(init[0],init[1],init[2]) , Point(direction[0],direction[1],direction[2]) ,Point(start_prism[0],start_prism[1],start_prism[2]),Point(end_prism[0],end_prism[1],end_prism[2]))
+	return Collide(Point(init[0],init[1],init[2]) , Point(direction[0],direction[1],direction[2]) ,Point(start_prism[0],start_prism[1],start_prism[2]),Point(end_prism[0],end_prism[1],end_prism[2]))
 
 def Collide(init , direction , start_prism , end_prism):
-	
+	###  TEST: [0, 0, 0] (-0.4363267749186886, 0, -49.998096153208564) (-1.5, -4.0, -21.0) (1.5, 4.0, -19.0)
 	### get increases
 	dx = direction.x - init.x
 	dy = direction.y - init.y
@@ -31,6 +31,13 @@ def Collide(init , direction , start_prism , end_prism):
 
 	### T * dx = start_prism.x -> T = start_prism.x / dx
 	### T * dx = end_prism.x -> T = end_prism.x / dy
+
+	if dx == 0:
+		dx += 0.0000000000001
+	if dy == 0:
+		dy += 0.0000000000001
+	if dz == 0:
+		dz += 0.0000000000001
 
 	txs = float(start_prism.x) / float(dx) #target x start
 	txe = float(end_prism.x) / float(dx) #start x end
@@ -51,5 +58,5 @@ def Collide(init , direction , start_prism , end_prism):
 	if range_2 == False:
 		return False
 	if range_2[1] < 0:
-		return False #the collision is on the back. Not valid	
+		return False #the collision is on the back. Not valid
 	return range_2
