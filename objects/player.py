@@ -4,6 +4,7 @@ from math import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 import pygame
+import shoot
 
 class Ak47(OGL.Cube):
     def __init__(self):
@@ -86,3 +87,13 @@ class Player(OGL.ComplexObject):
         for obj in self.static_objects:
             obj.setPos( -obj.real_pos[2] * sin(radians(-self.angle)) + obj.real_pos[0] * cos(radians(-self.angle)), obj.real_pos[1], obj.real_pos[2] * cos(radians(-self.angle)) + obj.real_pos[0] * sin(radians(-self.angle)))
             obj.setRotationY(self.angle)
+
+        if CLICK():
+            dist = 50
+            pointing = self.x + sin(radians(self.angle)) * dist, self.y, self.z - cos(radians(self.angle)) * dist
+            enemies = self.parent.QueryAllOfType("Enemy")
+            for en in enemies:
+                start = en.x - en.width/2.0 , en.y - en.height/2.0 , en.z - en.depth/2.0
+                end = en.x + en.width/2.0 , en.y + en.height/2.0 , en.z + en.depth/2.0
+                colition = shoot.EasyCollide([self.x,self.y,self.z], pointing, start, end)
+                print colition

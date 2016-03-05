@@ -26,6 +26,7 @@ class Base:
         self.ogl = Graphics()
 
         player1 = player.Player()
+        player1.setParent(self.ogl)
         self.ogl.AddObject(player1,"Player","Main Player")
 
         en1 = enemy.BasicEnemy(0,0,-20)

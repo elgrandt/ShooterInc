@@ -26,6 +26,9 @@ class Object:
         self.manualRotation = False
         self.manualColor    = False
         self.manualFill     = False
+        self.parent = None
+    def setParent(self,parent):
+        self.parent = parent
     def setX(self,x):
         self.x = x
     def setY(self,y):
