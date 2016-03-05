@@ -107,7 +107,7 @@ class Player(OGL.ComplexObject):
         for en in enemies:
             start = -(en.x - en.width/2.0) , en.y - en.height/2.0 , en.z - en.depth/2.0
             end = -(en.x + en.width/2.0) , en.y + en.height/2.0 , en.z + en.depth/2.0
-            print start , end
+            #print start , end
             colition = shoot.EasyCollide([self.x,self.y,self.z], pointing, start, end)
             if colition != False:
                 pointer.setColor(255,0,255)
