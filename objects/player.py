@@ -7,14 +7,47 @@ import pygame
 
 class Ak47(OGL.Cube):
     def __init__(self):
-        OGL.Cube.__init__(self,.5,.15,.04,.3,-.3,-1)
+        self.standby_pos = [.3,-.25,-1]
+        self.pointing_pos = [0,-.25,-1]
+        OGL.Cube.__init__(self,.5,.3,.1,*self.standby_pos)
         self.setColor(100,100,100)
         self.setFilled(True)
-        self.mode = "Standby" # Modes Standby and Shooting
+        self.mode = "Standby" # Modes Standby and Pointing
+        self.transition_time = 10.0
+        self.actual_rotation_y = 0.0
+        self.actual_rotation_z = -25
     def logic(self):
+        pressing2 = pygame.mouse.get_pressed()[2]
         if self.mode == "Standby":
-            self.setRotationZ(-25)
-            self.rotationY -= 35
+            self.real_pos = self.standby_pos[:]
+            self.actual_rotation_y = 35
+            self.actual_rotation_z = -25
+            if pressing2:
+                self.mode = "Transition to Pointing"
+        if self.mode == "Transition to Pointing":
+            self.actual_rotation_y -= (35-90) / self.transition_time
+            self.actual_rotation_z -= -25 / self.transition_time
+            self.real_pos[0] -= float(self.standby_pos[0] - self.pointing_pos[0]) / self.transition_time
+            self.real_pos[1] -= float(self.standby_pos[1] - self.pointing_pos[1]) / self.transition_time
+            self.real_pos[2] -= float(self.standby_pos[2] - self.pointing_pos[2]) / self.transition_time
+            if int(self.actual_rotation_y) == 90:
+                self.mode = "Pointing"
+        if self.mode == "Pointing":
+            self.real_pos = self.pointing_pos[:]
+            self.actual_rotation_z = 0
+            if not pygame.mouse.get_pressed()[2]:
+                self.mode = "Transition to Standby"
+        if self.mode == "Transition to Standby":
+            self.actual_rotation_y += (35-90) / self.transition_time
+            self.actual_rotation_z += -25 / self.transition_time
+            self.real_pos[0] += float(self.standby_pos[0] - self.pointing_pos[0]) / self.transition_time
+            self.real_pos[1] += float(self.standby_pos[1] - self.pointing_pos[1]) / self.transition_time
+            self.real_pos[2] += float(self.standby_pos[2] - self.pointing_pos[2]) / self.transition_time
+            if int(self.actual_rotation_y) == 35:
+                self.mode = "Standby"
+                self.real_pos = self.standby_pos[:]
+        self.rotationY -= self.actual_rotation_y
+        self.setRotationZ(self.actual_rotation_z)
 
 class Player(OGL.ComplexObject):
     def __init__(self):
