@@ -62,9 +62,8 @@ def Collide(init , direction , start_prism , end_prism):
 	b = min(tzs,tze)
 	tzs = a
 	tze = b
-	
 
-	#print txs , txe , tys , tye , tzs , tze
+	#print "[",txs , txe,"] [" , tys , tye ,"] [" , tzs , tze , "]"
 	range_1 = GetRange(txs,tys,txe,tye)
 	if range_1 == False:
 		return False
@@ -79,6 +78,6 @@ def Collide(init , direction , start_prism , end_prism):
 
 def main():
 	data = EasyCollide([0, 0, 0],(-0.4363267749186886, 0, -49.998096153208564),(-1.5, -4.0, -21.0),(1.5, 4.0, -19.0))
-	print data
+	#print data
 if __name__ == "__main__":
 	main()
