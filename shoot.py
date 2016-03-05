@@ -28,7 +28,6 @@ def Collide(init , direction , start_prism , end_prism):
 	dx = direction.x - init.x
 	dy = direction.y - init.y
 	dz = direction.z - init.z
-
 	### T * dx = start_prism.x -> T = start_prism.x / dx
 	### T * dx = end_prism.x -> T = end_prism.x / dy
 
@@ -59,11 +58,11 @@ def Collide(init , direction , start_prism , end_prism):
 	tye = b
 
 	a = min(tzs,tze)
-	b = min(tzs,tze)
+	b = max(tzs,tze)
 	tzs = a
 	tze = b
 
-	#print "[",txs , txe,"] [" , tys , tye ,"] [" , tzs , tze , "]"
+	print "[",txs , txe,"] [" , tys , tye ,"] [" , tzs , tze , "]"
 	range_1 = GetRange(txs,tys,txe,tye)
 	if range_1 == False:
 		return False
