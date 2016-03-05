@@ -65,7 +65,7 @@ class Player(OGL.ComplexObject):
         primary_weapon = Ak47()
         self.addObject(primary_weapon,"Primary Weapon")
         self.static_objects.append(primary_weapon)
-        pointer = OGL.Ellipsoid(.002,.002,.002,0,0,-1)
+        pointer = OGL.Ellipsoid(.004,.004,.004,0,0,-1)
         pointer.setColor(0,0,255)
         pointer.setFilled(True)
         self.addObject(pointer,"Pointer")
@@ -105,8 +105,9 @@ class Player(OGL.ComplexObject):
         pointer = self.getObject("Pointer")
         pointer.setColor(0,0,0)
         for en in enemies:
-            start = en.x - en.width/2.0 , en.y - en.height/2.0 , en.z - en.depth/2.0
-            end = en.x + en.width/2.0 , en.y + en.height/2.0 , en.z + en.depth/2.0
+            start = -(en.x - en.width/2.0) , en.y - en.height/2.0 , en.z - en.depth/2.0
+            end = -(en.x + en.width/2.0) , en.y + en.height/2.0 , en.z + en.depth/2.0
+            print start , end
             colition = shoot.EasyCollide([self.x,self.y,self.z], pointing, start, end)
             if colition != False:
                 pointer.setColor(255,0,255)
