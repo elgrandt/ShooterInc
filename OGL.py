@@ -357,14 +357,28 @@ class ModelGroup:
         self.anglez = 0
         self.enabled = True
 
+class ModelObject:
+    def __init__(self):
+        self.name = ""
+        self.faces = []
+        self.mtl = None
+        self.list = None
+        self.pos = [0,0,0]
+        self.anglex = 0
+        self.angley = 0
+        self.anglez = 0
+        self.enabled = True
+
 class OBJ:
-    def __init__(self, filename, swapyz=False, scale = 1):
+    def __init__(self, filename, swapyz=False, scale = 1, work_with_obj = False):
         """Loads a Wavefront OBJ file. """
+        self.work_with_obj = work_with_obj
         self.pos = [0,0,0]
         self.anglex = 0
         self.angley = 0
         self.anglez = 0
         self.groups = {}
+        self.objects = {}
         self.vertices = []
         self.normals = []
         self.texcoords = []
@@ -373,6 +387,7 @@ class OBJ:
         self.width, self.height, self.depth = 0,0,0
 
         actual_group = ModelGroup()
+        actual_obj = ModelObject()
         material = None
         self.mtl = None
         minx, miny, minz = 10000000, 10000000, 10000000
@@ -419,19 +434,30 @@ class OBJ:
                     else:
                         norms.append(0)
                 actual_group.faces.append((face, norms, texcoords, material))
+                actual_obj.faces.append((face, norms, texcoords, material))
             elif values[0] == 'g':
                 if actual_group.name != "":
                     self.groups[actual_group.name] = copy.deepcopy(actual_group)
                 actual_group = ModelGroup()
                 actual_group.name = values[1]
+            elif values[0] == 'o':
+                if actual_obj.name != "":
+                    self.objects[actual_obj.name] = copy.deepcopy(actual_obj)
+                actual_obj = ModelObject()
+                actual_obj.name = values[1]
         self.groups[actual_group.name] = copy.deepcopy(actual_group)
+        self.objects[actual_obj.name] = copy.deepcopy(actual_obj)
 
         self.width = maxx - minx
         self.height = maxy - miny
         self.depth = maxz - minz
 
-        for x in self.groups.keys():
-            obj = self.groups[x]
+        work = self.groups
+        if self.work_with_obj:
+            work = self.objects
+
+        for x in work.keys():
+            obj = work[x]
             gl_list = glGenLists(1)
             glNewList(gl_list, GL_COMPILE)
             glEnable(GL_TEXTURE_2D)
@@ -469,23 +495,31 @@ class OBJ:
             if self.groups[x].name == name:
                 return self.groups[x]
         return None
+    def getObject(self, name):
+        for x in self.objects.keys():
+            if self.objects[x].name == name:
+                return self.objects[x]
+        return None
     def blit(self):
         glTranslatef(*self.pos)
         glRotatef(self.anglex,1,0,0)
         glRotatef(self.angley,0,1,0)
         glRotatef(self.anglez,0,0,1)
         glColor4f(255,255,255,255)
-        for obj in self.groups.keys():
-            if self.groups[obj].enabled:
-                glTranslatef(*self.groups[obj].pos)
-                glRotatef(self.groups[obj].anglex,1,0,0)
-                glRotatef(self.groups[obj].angley,0,1,0)
-                glRotatef(self.groups[obj].anglez,0,0,1)
-                glCallList(self.groups[obj].list)
-                glRotatef(-self.groups[obj].anglez,0,0,1)
-                glRotatef(-self.groups[obj].angley,0,1,0)
-                glRotatef(-self.groups[obj].anglex,1,0,0)
-                glTranslatef(-self.groups[obj].pos[0],-self.groups[obj].pos[1],-self.groups[obj].pos[2])
+        work = self.groups
+        if self.work_with_obj:
+            work = self.objects
+        for obj in work.keys():
+            if work[obj].enabled:
+                glTranslatef(*work[obj].pos)
+                glRotatef(work[obj].anglex,1,0,0)
+                glRotatef(work[obj].angley,0,1,0)
+                glRotatef(work[obj].anglez,0,0,1)
+                glCallList(work[obj].list)
+                glRotatef(-work[obj].anglez,0,0,1)
+                glRotatef(-work[obj].angley,0,1,0)
+                glRotatef(-work[obj].anglex,1,0,0)
+                glTranslatef(-work[obj].pos[0],-work[obj].pos[1],-work[obj].pos[2])
         glRotatef(-self.anglez,0,0,1)
         glRotatef(-self.angley,0,1,0)
         glRotatef(-self.anglex,1,0,0)

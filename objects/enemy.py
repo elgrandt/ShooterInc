@@ -3,7 +3,7 @@ import OGL
 class BasicEnemy(OGL.Cube):
     def __init__(self,x,y,z):
         OGL.Cube.__init__(self,3,8,2,x,y,z)
-        self.model = OGL.OBJ("Man.obj",False,30)
+        self.model = OGL.OBJ("Man.obj",False,1)
         """self.model.getGroup("Object001").name = "Head"
         self.model.getGroup("Object002").name = "Body"
         self.model.getGroup("Object003").name = "Left arm"
@@ -22,5 +22,6 @@ class BasicEnemy(OGL.Cube):
         self.depth = self.model.depth
         #self.model.getGroup("Left arm").anglex = 180
     def blit(self):
-        #self.model.pos[1] = -5
+        self.model.pos[1] = -5
+        self.model.pos[2] = 30
         self.model.blit()
