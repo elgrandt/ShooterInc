@@ -5,20 +5,22 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import pygame
 import shoot
+import config
 
 class SmithAndWesson(OGL.Cube):
     def __init__(self):
-        self.standby_pos = [.5,-1.1,-3]#[.3,-.25,-1]
-        self.pointing_pos = [0,-.6,-3]#[0,-.25,-1]
+        self.standby_pos = config.SmithAndWesson["Standby Pos"]#[.3,-.25,-1]
+        self.pointing_pos = config.SmithAndWesson["Pointing Pos"]#[0,-.25,-1]
         OGL.Cube.__init__(self,.5,.3,.1,*self.standby_pos)
         self.setColor(100,100,100)
         self.setFilled(True)
         self.mode = "Standby" # Modes Standby and Pointing
-        self.transition_time = 5.0
-        self.shoot_animation = 3
+        self.transition_time = config.SmithAndWesson["Transition to pointing time"]
+        self.shoot_animation = config.SmithAndWesson["Shoot animation time"]
         self.actual_rotation_y = 0.0
         self.actual_rotation_z = -25
         self.model = OGL.OBJ("Handgun_obj.obj",swapyz=False)
+        self.width, self.height, self.depth = self.model.width, self.model.height, self.model.depth
         self.model.angley = 180
         self.barrel = self.model.getGroup("Cube.005_Cube.000_handgun")
         self.barrel.initial = 0,0,0
@@ -31,13 +33,13 @@ class SmithAndWesson(OGL.Cube):
         pressing2 = pygame.mouse.get_pressed()[2]
         if self.mode == "Standby":
             self.real_pos = self.standby_pos[:]
-            self.actual_rotation_y = 35
-            self.actual_rotation_z = -35
+            self.actual_rotation_y = config.SmithAndWesson["Standby rotation Y"]
+            self.actual_rotation_z = config.SmithAndWesson["Standby rotation Z"]
             if pressing2:
                 self.mode = "Transition to Pointing"
         if self.mode == "Transition to Pointing":
-            self.actual_rotation_y -= (35-90) / self.transition_time
-            self.actual_rotation_z -= -25 / self.transition_time
+            self.actual_rotation_y -= (config.SmithAndWesson["Standby rotation Y"]-90) / self.transition_time
+            self.actual_rotation_z -= config.SmithAndWesson["Standby rotation Z"] / self.transition_time
             self.real_pos[0] -= float(self.standby_pos[0] - self.pointing_pos[0]) / self.transition_time
             self.real_pos[1] -= float(self.standby_pos[1] - self.pointing_pos[1]) / self.transition_time
             self.real_pos[2] -= float(self.standby_pos[2] - self.pointing_pos[2]) / self.transition_time
@@ -49,8 +51,8 @@ class SmithAndWesson(OGL.Cube):
             if not pygame.mouse.get_pressed()[2]:
                 self.mode = "Transition to Standby"
         if self.mode == "Transition to Standby":
-            self.actual_rotation_y += (35-90) / self.transition_time
-            self.actual_rotation_z += -35 / self.transition_time
+            self.actual_rotation_y += (config.SmithAndWesson["Standby rotation Y"]-90) / self.transition_time
+            self.actual_rotation_z += config.SmithAndWesson["Standby rotation Z"] / self.transition_time
             self.real_pos[0] += float(self.standby_pos[0] - self.pointing_pos[0]) / self.transition_time
             self.real_pos[1] += float(self.standby_pos[1] - self.pointing_pos[1]) / self.transition_time
             self.real_pos[2] += float(self.standby_pos[2] - self.pointing_pos[2]) / self.transition_time
