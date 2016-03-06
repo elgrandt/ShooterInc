@@ -15,7 +15,7 @@ class SmithAndWesson(OGL.Cube):
         self.setFilled(True)
         self.mode = "Standby" # Modes Standby and Pointing
         self.transition_time = 5.0
-        self.shoot_animation = 5
+        self.shoot_animation = 3
         self.actual_rotation_y = 0.0
         self.actual_rotation_z = -25
         self.model = OGL.OBJ("Handgun_obj.obj",swapyz=False)

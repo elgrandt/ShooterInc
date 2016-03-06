@@ -314,6 +314,7 @@ class Ellipsoid(Object):
 
 def MTL(filename):
     contents = {}
+    contents['map_Kd'] = False
     mtl = None
     for line in open("models/"+filename, "r"):
         if line.startswith('#'): continue
@@ -326,6 +327,7 @@ def MTL(filename):
         elif values[0] == 'map_Kd':
             # load the texture referred to by this declaration
             mtl[values[0]] = values[1]
+            contents[values[0]] = True
             surf = pygame.image.load("models/textures/"+mtl['map_Kd'])
             image = pygame.image.tostring(surf, 'RGBA', 1)
             ix, iy = surf.get_rect().size
@@ -337,7 +339,7 @@ def MTL(filename):
                 GL_LINEAR)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA,
                 GL_UNSIGNED_BYTE, image)
-        elif values[0] == 'map_Bump' or values[0] == 'map_Ks':
+        elif values[0] == 'map_Bump' or values[0] == 'map_Ks' or values[0] == 'map_Ka' or values[0] == 'map_bump' or values[0] == 'bump':
             pass
         else:
             mtl[values[0]] = map(float, values[1:])
@@ -356,9 +358,9 @@ class ModelGroup:
         self.enabled = True
 
 class OBJ:
-    def __init__(self, filename, swapyz=False):
+    def __init__(self, filename, swapyz=False, scale = 1):
         """Loads a Wavefront OBJ file. """
-        self.pos = 0,0,0
+        self.pos = [0,0,0]
         self.anglex = 0
         self.angley = 0
         self.anglez = 0
@@ -366,11 +368,15 @@ class OBJ:
         self.vertices = []
         self.normals = []
         self.texcoords = []
-        self.scale = 1
+        self.scale = scale
+        self.color = (0,0,0)
+        self.width, self.height, self.depth = 0,0,0
 
         actual_group = ModelGroup()
         material = None
         self.mtl = None
+        minx, miny, minz = 10000000, 10000000, 10000000
+        maxx, maxy, maxz = -10000000, -10000000, -10000000
         for line in open("models/"+filename, "r"):
             if line.startswith('#'): continue
             values = line.split()
@@ -379,6 +385,12 @@ class OBJ:
                 v = map(float, values[1:4])
                 if swapyz:
                     v = v[0], v[2], v[1]
+                minx = min(v[0]/self.scale,minx)
+                miny = min(v[1]/self.scale,miny)
+                minz = min(v[2]/self.scale,minz)
+                maxx = max(v[0]/self.scale,maxx)
+                maxy = max(v[1]/self.scale,maxy)
+                maxz = max(v[2]/self.scale,maxz)
                 self.vertices.append(v)
             elif values[0] == 'vn':
                 v = map(float, values[1:4])
@@ -414,6 +426,10 @@ class OBJ:
                 actual_group.name = values[1]
         self.groups[actual_group.name] = copy.deepcopy(actual_group)
 
+        self.width = maxx - minx
+        self.height = maxy - miny
+        self.depth = maxz - minz
+
         for x in self.groups.keys():
             obj = self.groups[x]
             gl_list = glGenLists(1)
@@ -425,19 +441,23 @@ class OBJ:
                 vertices, normals, texture_coords, material = face
                 if self.mtl:
                     mtl = self.mtl[material]
-                if 'texture_Kd' in mtl:
-                    # use diffuse texmap
-                    glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
+                    if 'texture_Kd' in mtl:
+                        # use diffuse texmap
+                        glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
+                    else:
+                        # just use diffuse colour
+                        glColor(*mtl['Kd'])
                 else:
-                    # just use diffuse colour
-                    glColor(*mtl['Kd'])
+                    glColor3fv(self.color)
 
                 glBegin(GL_POLYGON)
                 for i in range(len(vertices)):
                     if normals[i] > 0:
                         glNormal3fv(self.normals[normals[i] - 1])
                     if texture_coords[i] > 0:
-                        glTexCoord2fv(self.texcoords[texture_coords[i] - 1])
+                        if self.mtl:
+                            if self.mtl['map_Kd']:
+                                glTexCoord2fv(self.texcoords[texture_coords[i] - 1])
                     v = self.vertices[vertices[i] - 1]
                     glVertex3f(v[0]/self.scale, v[1]/self.scale, v[2]/self.scale)
                 glEnd()
@@ -445,10 +465,10 @@ class OBJ:
             glEndList()
             obj.list = gl_list
     def getGroup(self, name):
-        if self.groups.has_key(name):
-            return self.groups[name]
-        else:
-            return None
+        for x in self.groups.keys():
+            if self.groups[x].name == name:
+                return self.groups[x]
+        return None
     def blit(self):
         glTranslatef(*self.pos)
         glRotatef(self.anglex,1,0,0)
@@ -462,7 +482,11 @@ class OBJ:
                 glRotatef(self.groups[obj].angley,0,1,0)
                 glRotatef(self.groups[obj].anglez,0,0,1)
                 glCallList(self.groups[obj].list)
-                glTranslatef(-self.groups[obj].pos[0],-self.groups[obj].pos[1],-self.groups[obj].pos[2])
-                glRotatef(-self.groups[obj].anglex,1,0,0)
-                glRotatef(-self.groups[obj].angley,0,1,0)
                 glRotatef(-self.groups[obj].anglez,0,0,1)
+                glRotatef(-self.groups[obj].angley,0,1,0)
+                glRotatef(-self.groups[obj].anglex,1,0,0)
+                glTranslatef(-self.groups[obj].pos[0],-self.groups[obj].pos[1],-self.groups[obj].pos[2])
+        glRotatef(-self.anglez,0,0,1)
+        glRotatef(-self.angley,0,1,0)
+        glRotatef(-self.anglex,1,0,0)
+        glTranslatef(-self.pos[0],-self.pos[1],-self.pos[2])

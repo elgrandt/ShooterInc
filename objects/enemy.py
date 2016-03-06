@@ -1,17 +1,26 @@
 import OGL
 
-class BasicEnemy(OGL.ComplexObject):
+class BasicEnemy(OGL.Cube):
     def __init__(self,x,y,z):
-        OGL.ComplexObject.__init__(self,x,y,z)
-        self.width, self.height, self.depth = 3,8,2
-        body = OGL.Cube(self.width,self.height,self.depth,0,0,0)
-        body.setColor(0,0,255)
-        body.setFilled(True)
-        self.addObject(body,"Body")
-        self.head_size = (1,1,1)
-        self.head_pos = (0,self.height/2+self.head_size[1],0)
-        head = OGL.Ellipsoid(self.head_size[0],self.head_size[1],self.head_size[2],self.head_pos[0],self.head_pos[1],self.head_pos[2])
-        head.setColor(255,0,0)
-        head.setFilled(True)
-        head.setQuality(20)
-        self.addObject(head,"Head")
+        OGL.Cube.__init__(self,3,8,2,x,y,z)
+        self.model = OGL.OBJ("Man.obj",False,30)
+        """self.model.getGroup("Object001").name = "Head"
+        self.model.getGroup("Object002").name = "Body"
+        self.model.getGroup("Object003").name = "Left arm"
+        self.model.getGroup("Object004").name = "Right arm"
+        self.model.getGroup("Object005").name = "Left hand"
+        self.model.getGroup("Object006").name = "Right hand"
+        self.model.getGroup("Object008").name = "Left leg"
+        self.model.getGroup("Object009").name = "Right leg"
+        self.model.getGroup("Object013").name = "Eyes"
+        self.model.getGroup("Object019").name = "Left leg shit"
+        self.model.getGroup("Object020").name = "Right leg shit"
+        self.model.getGroup("Object021").name = "Both boots"
+        """
+        self.width = self.model.width
+        self.height = self.model.height
+        self.depth = self.model.depth
+        #self.model.getGroup("Left arm").anglex = 180
+    def blit(self):
+        #self.model.pos[1] = -5
+        self.model.blit()
