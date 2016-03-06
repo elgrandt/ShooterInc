@@ -8,7 +8,7 @@ import shoot
 
 class Ak47(OGL.Cube):
     def __init__(self):
-        self.standby_pos = [.4,-1,-3]#[.3,-.25,-1]
+        self.standby_pos = [.5,-1.1,-3]#[.3,-.25,-1]
         self.pointing_pos = [0,-.6,-3]#[0,-.25,-1]
         OGL.Cube.__init__(self,.5,.3,.1,*self.standby_pos)
         self.setColor(100,100,100)
@@ -32,7 +32,7 @@ class Ak47(OGL.Cube):
         if self.mode == "Standby":
             self.real_pos = self.standby_pos[:]
             self.actual_rotation_y = 35
-            self.actual_rotation_z = -25
+            self.actual_rotation_z = -35
             if pressing2:
                 self.mode = "Transition to Pointing"
         if self.mode == "Transition to Pointing":
@@ -50,7 +50,7 @@ class Ak47(OGL.Cube):
                 self.mode = "Transition to Standby"
         if self.mode == "Transition to Standby":
             self.actual_rotation_y += (35-90) / self.transition_time
-            self.actual_rotation_z += -25 / self.transition_time
+            self.actual_rotation_z += -35 / self.transition_time
             self.real_pos[0] += float(self.standby_pos[0] - self.pointing_pos[0]) / self.transition_time
             self.real_pos[1] += float(self.standby_pos[1] - self.pointing_pos[1]) / self.transition_time
             self.real_pos[2] += float(self.standby_pos[2] - self.pointing_pos[2]) / self.transition_time
@@ -130,7 +130,6 @@ class Player(OGL.ComplexObject):
         for en in enemies:
             start = -(en.x - en.width/2.0) , en.y - en.height/2.0 , en.z - en.depth/2.0
             end = -(en.x + en.width/2.0) , en.y + en.height/2.0 , en.z + en.depth/2.0
-            #print start , end
             colition = shoot.EasyCollide([self.x,self.y,self.z], pointing, start, end)
             if colition != False:
                 pointer.setColor(255,0,255)
