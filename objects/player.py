@@ -6,7 +6,7 @@ from OpenGL.GLU import *
 import pygame
 import shoot
 
-class Ak47(OGL.Cube):
+class SmithAndWesson(OGL.Cube):
     def __init__(self):
         self.standby_pos = [.5,-1.1,-3]#[.3,-.25,-1]
         self.pointing_pos = [0,-.6,-3]#[0,-.25,-1]
@@ -85,7 +85,7 @@ class Player(OGL.ComplexObject):
         self.angle = 0
         self.angle_speed = 0.1
         self.static_objects = []
-        primary_weapon = Ak47()
+        primary_weapon = SmithAndWesson()
         self.addObject(primary_weapon,"Primary Weapon")
         self.static_objects.append(primary_weapon)
         pointer = OGL.Ellipsoid(.004,.004,.004,0,0,-1)
