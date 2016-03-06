@@ -14,11 +14,19 @@ class Ak47(OGL.Cube):
         self.setColor(100,100,100)
         self.setFilled(True)
         self.mode = "Standby" # Modes Standby and Pointing
-        self.transition_time = 10.0
+        self.transition_time = 5.0
+        self.shoot_animation = 5
         self.actual_rotation_y = 0.0
         self.actual_rotation_z = -25
-        self.model = OGL.OBJ("models/Handgun_obj.obj",swapyz=False)
+        self.model = OGL.OBJ("Handgun_obj.obj",swapyz=False)
+        self.model.angley = 180
+        self.barrel = self.model.getGroup("Cube.005_Cube.000_handgun")
+        self.barrel.initial = 0,0,0
+        self.barrel.max = -.3,0,0
+        self.barrel.sign = 1
         self.colitions = []
+        self.before_mode = None
+        self.clicked = False
     def logic(self):
         pressing2 = pygame.mouse.get_pressed()[2]
         if self.mode == "Standby":
@@ -49,14 +57,26 @@ class Ak47(OGL.Cube):
             if int(self.actual_rotation_y) == 35:
                 self.mode = "Standby"
                 self.real_pos = self.standby_pos[:]
+        if self.mode == "Shoot animation":
+            self.barrel.pos[0] += (self.barrel.max[0] - self.barrel.initial[0]) / self.shoot_animation * self.barrel.sign
+            if abs(self.barrel.pos[0]) < 0.00001:
+                self.barrel.pos[0] = 0
+            if self.barrel.pos[0] == self.barrel.max[0]:
+                self.barrel.sign *= -1
+            if self.barrel.pos[0] == self.barrel.initial[0]:
+                self.barrel.sign *= -1
+                self.mode = str(self.before_mode)
+        if self.mode != "Shoot animation" and CLICK() and not self.clicked:
+            self.before_mode = str(self.mode)
+            self.mode = "Shoot animation"
+            self.clicked = True
+        if not CLICK():
+            self.clicked = False
+
         self.rotationY -= self.actual_rotation_y
         self.setRotationZ(self.actual_rotation_z)
     def blit(self):
-        for x in self.model.objects.keys():
-            self.model.objects[x].angley = 180
         self.model.blit()
-        #glRotatef(180,0,1,0)
-        #glCallList(self.model.gl_list)
 
 class Player(OGL.ComplexObject):
     def __init__(self):

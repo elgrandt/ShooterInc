@@ -315,7 +315,7 @@ class Ellipsoid(Object):
 def MTL(filename):
     contents = {}
     mtl = None
-    for line in open(filename, "r"):
+    for line in open("models/"+filename, "r"):
         if line.startswith('#'): continue
         values = line.split()
         if not values: continue
@@ -326,7 +326,7 @@ def MTL(filename):
         elif values[0] == 'map_Kd':
             # load the texture referred to by this declaration
             mtl[values[0]] = values[1]
-            surf = pygame.image.load(mtl['map_Kd'])
+            surf = pygame.image.load("models/textures/"+mtl['map_Kd'])
             image = pygame.image.tostring(surf, 'RGBA', 1)
             ix, iy = surf.get_rect().size
             texid = mtl['texture_Kd'] = glGenTextures(1)
@@ -343,29 +343,35 @@ def MTL(filename):
             mtl[values[0]] = map(float, values[1:])
     return contents
 
-class ModelObject:
+class ModelGroup:
     def __init__(self):
         self.name = ""
-        self.vertices = []
-        self.normals = []
-        self.texcoords = []
         self.faces = []
         self.mtl = None
         self.list = None
-        self.pos = 0,0,0
+        self.pos = [0,0,0]
         self.anglex = 0
         self.angley = 0
         self.anglez = 0
+        self.enabled = True
 
 class OBJ:
     def __init__(self, filename, swapyz=False):
         """Loads a Wavefront OBJ file. """
-        self.objects = {}
+        self.pos = 0,0,0
+        self.anglex = 0
+        self.angley = 0
+        self.anglez = 0
+        self.groups = {}
+        self.vertices = []
+        self.normals = []
+        self.texcoords = []
+        self.scale = 1
 
-        actual_object = ModelObject()
+        actual_group = ModelGroup()
         material = None
-        mtl = None
-        for line in open(filename, "r"):
+        self.mtl = None
+        for line in open("models/"+filename, "r"):
             if line.startswith('#'): continue
             values = line.split()
             if not values: continue
@@ -373,18 +379,18 @@ class OBJ:
                 v = map(float, values[1:4])
                 if swapyz:
                     v = v[0], v[2], v[1]
-                actual_object.vertices.append(v)
+                self.vertices.append(v)
             elif values[0] == 'vn':
                 v = map(float, values[1:4])
                 if swapyz:
                     v = v[0], v[2], v[1]
-                actual_object.normals.append(v)
+                self.normals.append(v)
             elif values[0] == 'vt':
-                actual_object.texcoords.append(map(float, values[1:3]))
+                self.texcoords.append(map(float, values[1:3]))
             elif values[0] in ('usemtl', 'usemat'):
                 material = values[1]
             elif values[0] == 'mtllib':
-                mtl = MTL(values[1])
+                self.mtl = MTL(values[1])
             elif values[0] == 'f':
                 face = []
                 texcoords = []
@@ -400,27 +406,25 @@ class OBJ:
                         norms.append(int(w[2]))
                     else:
                         norms.append(0)
-                actual_object.faces.append((face, norms, texcoords, material))
-            elif values[0] == 'o':
-                if actual_object.name != "":
-                    actual_object.mtl = mtl
-                    self.objects[actual_object.name] = copy.deepcopy(actual_object)
-                actual_object = ModelObject()
-                actual_object.name = values[1]
-        actual_object.mtl = mtl
-        self.objects[actual_object.name] = copy.deepcopy(actual_object)
+                actual_group.faces.append((face, norms, texcoords, material))
+            elif values[0] == 'g':
+                if actual_group.name != "":
+                    self.groups[actual_group.name] = copy.deepcopy(actual_group)
+                actual_group = ModelGroup()
+                actual_group.name = values[1]
+        self.groups[actual_group.name] = copy.deepcopy(actual_group)
 
-        for x in self.objects.keys():
-            obj = self.objects[x]
-            print obj
+        for x in self.groups.keys():
+            obj = self.groups[x]
             gl_list = glGenLists(1)
             glNewList(gl_list, GL_COMPILE)
             glEnable(GL_TEXTURE_2D)
             glFrontFace(GL_CCW)
+            glColor4f(255,255,255,255)
             for face in obj.faces:
                 vertices, normals, texture_coords, material = face
-
-                mtl = obj.mtl[material]
+                if self.mtl:
+                    mtl = self.mtl[material]
                 if 'texture_Kd' in mtl:
                     # use diffuse texmap
                     glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
@@ -431,15 +435,34 @@ class OBJ:
                 glBegin(GL_POLYGON)
                 for i in range(len(vertices)):
                     if normals[i] > 0:
-                        glNormal3fv(obj.normals[normals[i] - 1])
+                        glNormal3fv(self.normals[normals[i] - 1])
                     if texture_coords[i] > 0:
-                        glTexCoord2fv(obj.texcoords[texture_coords[i] - 1])
-                    glVertex3fv(obj.vertices[vertices[i] - 1])
+                        glTexCoord2fv(self.texcoords[texture_coords[i] - 1])
+                    v = self.vertices[vertices[i] - 1]
+                    glVertex3f(v[0]/self.scale, v[1]/self.scale, v[2]/self.scale)
                 glEnd()
             glDisable(GL_TEXTURE_2D)
             glEndList()
-    def getObject(self, name):
-        return self.objects[name]
+            obj.list = gl_list
+    def getGroup(self, name):
+        if self.groups.has_key(name):
+            return self.groups[name]
+        else:
+            return None
     def blit(self):
-        for obj in self.objects:
-            glCallList(self.objects[obj].list)
+        glTranslatef(*self.pos)
+        glRotatef(self.anglex,1,0,0)
+        glRotatef(self.angley,0,1,0)
+        glRotatef(self.anglez,0,0,1)
+        glColor4f(255,255,255,255)
+        for obj in self.groups.keys():
+            if self.groups[obj].enabled:
+                glTranslatef(*self.groups[obj].pos)
+                glRotatef(self.groups[obj].anglex,1,0,0)
+                glRotatef(self.groups[obj].angley,0,1,0)
+                glRotatef(self.groups[obj].anglez,0,0,1)
+                glCallList(self.groups[obj].list)
+                glTranslatef(-self.groups[obj].pos[0],-self.groups[obj].pos[1],-self.groups[obj].pos[2])
+                glRotatef(-self.groups[obj].anglex,1,0,0)
+                glRotatef(-self.groups[obj].angley,0,1,0)
+                glRotatef(-self.groups[obj].anglez,0,0,1)

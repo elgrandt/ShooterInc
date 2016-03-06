@@ -1,6 +1,6 @@
 # Blender v2.74 (sub 0) OBJ File: 'Handgun_Game_Blender Gamer Engine.blend'
 # www.blender.org
-mtllib models/Handgun_obj.mtl
+mtllib Handgun_obj.mtl
 o Cube.002_Cube.003
 v -0.597147 0.394831 -0.000899
 v -0.309579 0.343394 0.000543
@@ -133,7 +133,7 @@ vn -0.816500 -0.495000 -0.297100
 vn 0.376300 -0.734200 -0.565000
 vn 0.606200 0.559600 -0.565000
 g Cube.002_Cube.003_handgun
-usemtl handgun
+usemtl handgun_handgun_C.jpg
 s off
 f 21/1/1 22/2/1 33/3/1 14/4/1
 f 27/5/1 28/6/1 14/4/1 33/3/1
@@ -4556,7 +4556,7 @@ vn 0.000000 -0.059600 0.998200
 vn 0.000000 -0.875300 -0.483500
 vn 0.000000 -0.875300 0.483500
 g Cube.005_Cube.000_handgun
-usemtl handgun
+usemtl handgun_handgun_C.jpg
 s off
 f 1290/929/813 1141/930/813 1190/931/813
 f 1290/929/813 1235/932/813 1141/930/813
@@ -5087,7 +5087,7 @@ vn 0.897200 0.020000 0.441100
 vn 0.875900 -0.217400 0.430600
 vn 0.835100 -0.366000 0.410600
 g Gun_trigger_Cube.002_handgun
-usemtl handgun
+usemtl handgun_handgun_C.jpg
 s off
 f 1618/1334/998 1602/1335/998 1601/1336/998 1616/1337/998
 f 1645/1338/998 1650/1339/998 1692/1340/998 1646/1341/998
