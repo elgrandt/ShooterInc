@@ -212,13 +212,18 @@ class Graphics:
         del self.objects2d[name]
     def refresh(self):
         gluPerspective(45, (SSIZE()[0]/SSIZE()[1]), 0.1, 200.0)
+        glEnable(GL_LIGHTING)
         glEnable(GL_DEPTH_TEST)
         glShadeModel(GL_SMOOTH)
-        #if player != None:
-        #    gluLookAt(player.x, player.y, player.z, player.x + math.sin(math.radians(player.angle))*20, player.y, player.z - math.cos(math.radians(player.angle))*20, 0,1,0)
+        glLightfv(GL_LIGHT0, GL_AMBIENT, (0,0,0,1))
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, (.8,.8,.8,1))
+        glLightfv(GL_LIGHT0, GL_SPECULAR, (0,0,0,1))
+        glLightfv(GL_LIGHT0, GL_POSITION, (0,1,0,1))
+        glEnable(GL_LIGHT0)
         for x in self.objects.keys():
             self.objects[x].refresh()
         glDisable(GL_DEPTH_TEST)
+        glDisable(GL_LIGHTING)
         glMatrixMode(GL_PROJECTION)
         glPushMatrix()
         glOrtho(0.0, SSIZE()[0], SSIZE()[1], 0.0, -1.0, 10.0)
@@ -231,7 +236,11 @@ class Graphics:
         glPopMatrix()
         glMatrixMode(GL_MODELVIEW)
     def QueryAllOfType(self , type):
-        return self.types[type]
+        if self.types.has_key(type):
+            return self.types[type]
+        return [
+
+        ]
 
 class Cube(Object):
     def blit(self):
@@ -316,6 +325,10 @@ def MTL(filename):
     contents = {}
     contents['map_Kd'] = False
     mtl = None
+    try:
+        open("models/"+filename,"r")
+    except:
+        return {}
     for line in open("models/"+filename, "r"):
         if line.startswith('#'): continue
         values = line.split()
@@ -324,14 +337,14 @@ def MTL(filename):
             mtl = contents[values[1]] = {}
         elif mtl is None:
             raise ValueError, "mtl file doesn't start with newmtl stmt"
-        elif values[0] == 'map_Kd':
+        elif values[0] == 'map_Kd' or values[0] == 'map_Ks':
             # load the texture referred to by this declaration
+            contents['map_Kd'] = True
             mtl[values[0]] = values[1]
-            contents[values[0]] = True
-            surf = pygame.image.load("models/textures/"+mtl['map_Kd'])
+            surf = pygame.image.load("models/textures/"+values[1])
             image = pygame.image.tostring(surf, 'RGBA', 1)
             ix, iy = surf.get_rect().size
-            texid = mtl['texture_Kd'] = glGenTextures(1)
+            texid = mtl[values[0]] = glGenTextures(1)
             glBindTexture(GL_TEXTURE_2D, texid)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                 GL_LINEAR)
@@ -339,6 +352,7 @@ def MTL(filename):
                 GL_LINEAR)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA,
                 GL_UNSIGNED_BYTE, image)
+            glBindTexture(GL_TEXTURE_2D,0)
         elif values[0] == 'map_Bump' or values[0] == 'map_Ks' or values[0] == 'map_Ka' or values[0] == 'map_bump' or values[0] == 'bump':
             pass
         else:
@@ -460,22 +474,28 @@ class OBJ:
             obj = work[x]
             gl_list = glGenLists(1)
             glNewList(gl_list, GL_COMPILE)
-            glEnable(GL_TEXTURE_2D)
             glFrontFace(GL_CCW)
             glColor4f(255,255,255,255)
+            glEnable(GL_TEXTURE_2D)
             for face in obj.faces:
                 vertices, normals, texture_coords, material = face
                 if self.mtl:
                     mtl = self.mtl[material]
-                    if 'texture_Kd' in mtl:
+                    #glMaterialfv(GL_FRONT, GL_AMBIENT, mtl['Ka'])
+                    if 'Kd' in mtl:
+                        glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl['Kd'])
+                    if 'Ks' in mtl:
+                        glMaterialfv(GL_FRONT, GL_SPECULAR, mtl['Ks'])
+                    if 'Ns' in mtl:
+                        glMaterialf(GL_FRONT, GL_SHININESS, mtl['Ns'][0]/1000*128)
+                    if 'map_Kd' in mtl:
                         # use diffuse texmap
-                        glBindTexture(GL_TEXTURE_2D, mtl['texture_Kd'])
-                    else:
-                        # just use diffuse colour
-                        glColor(*mtl['Kd'])
+                        glBindTexture(GL_TEXTURE_2D, mtl['map_Kd'])
+                        if 'map_Ks' in mtl:
+                            pass#glBindTexture(GL_TEXTURE_2D, mtl['map_Ks'])
+
                 else:
                     glColor3fv(self.color)
-
                 glBegin(GL_POLYGON)
                 for i in range(len(vertices)):
                     if normals[i] > 0:
@@ -487,6 +507,7 @@ class OBJ:
                     v = self.vertices[vertices[i] - 1]
                     glVertex3f(v[0]/self.scale, v[1]/self.scale, v[2]/self.scale)
                 glEnd()
+                glBindTexture(GL_TEXTURE_2D,0)
             glDisable(GL_TEXTURE_2D)
             glEndList()
             obj.list = gl_list

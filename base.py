@@ -19,6 +19,7 @@ class Base:
         pygame.display.set_mode((width ,height) , DOUBLEBUF|OPENGL)
         pygame.display.set_caption(caption)
         gluPerspective(45, (self.width/self.height), 0.1, 200.0)
+        glEnable(GL_LIGHTING)
         glShadeModel(GL_SMOOTH)
         self.clock = pygame.time.Clock()
         self.FPS = 60
@@ -33,8 +34,8 @@ class Base:
         en1 = enemy.BasicEnemy(0,0,-20)
         self.ogl.AddObject(en1, "Enemy","Enemy 1")
 
-        en2 = enemy.BasicEnemy(10,0,-20)
-        self.ogl.AddObject(en2, "Enemy","Enemy 2")
+        #en2 = enemy.BasicEnemy(10,0,-20)
+        #self.ogl.AddObject(en2, "Enemy","Enemy 2")
 
         test2d = Object2D(20,20)
         surface = pygame.Surface((100,100))
@@ -67,7 +68,7 @@ class Base:
         if KEY(K_ESCAPE):
             self.on = False
 
-        glClearColor(1,1,1,1)
+        glClearColor(0,0,0,1)
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         self.ogl.refresh()
         pygame.display.flip()
