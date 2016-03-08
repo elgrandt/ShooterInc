@@ -1,3 +1,5 @@
+from oauthlib.oauth2.rfc6749.clients import backend_application
+
 __author__ = 'Dylan'
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -5,6 +7,9 @@ import math
 import pygame
 from macros import *
 import copy
+import threading
+
+loading_objects = 0
 
 class Object:
     def __init__(self , width , height , depth , x , y , z):
@@ -324,6 +329,7 @@ class Ellipsoid(Object):
 def MTL(filename):
     contents = {}
     contents['map_Kd'] = False
+    contents['objects'] = []
     mtl = None
     try:
         open("models/"+filename,"r")
@@ -335,24 +341,13 @@ def MTL(filename):
         if not values: continue
         if values[0] == 'newmtl':
             mtl = contents[values[1]] = {}
+            contents['objects'].append(values[1])
         elif mtl is None:
             raise ValueError, "mtl file doesn't start with newmtl stmt"
         elif values[0] == 'map_Kd' or values[0] == 'map_Ks':
             # load the texture referred to by this declaration
             contents['map_Kd'] = True
             mtl[values[0]] = values[1]
-            surf = pygame.image.load("models/textures/"+values[1])
-            image = pygame.image.tostring(surf, 'RGBA', 1)
-            ix, iy = surf.get_rect().size
-            texid = mtl[values[0]] = glGenTextures(1)
-            glBindTexture(GL_TEXTURE_2D, texid)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                GL_LINEAR)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                GL_LINEAR)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA,
-                GL_UNSIGNED_BYTE, image)
-            glBindTexture(GL_TEXTURE_2D,0)
         elif values[0] == 'map_Bump' or values[0] == 'map_Ks' or values[0] == 'map_Ka' or values[0] == 'map_bump' or values[0] == 'bump':
             pass
         else:
@@ -399,7 +394,14 @@ class OBJ:
         self.scale = scale
         self.color = (0,0,0)
         self.width, self.height, self.depth = 0,0,0
-
+        self.loaded = False
+        self.almost_loaded = False
+        self.onload = None
+        global loading_objects
+        loading_objects += 1
+        load_thread = threading.Thread(target=self.loadFile, name = "ObjectLoad", args=[filename, swapyz])
+        load_thread.start()
+    def loadFile(self, filename, swapyz):
         actual_group = ModelGroup()
         actual_obj = ModelObject()
         material = None
@@ -465,11 +467,26 @@ class OBJ:
         self.width = maxx - minx
         self.height = maxy - miny
         self.depth = maxz - minz
-
+        self.almost_loaded = True
+    def makeLists(self):
+        for x in self.mtl['objects']:
+            for y in self.mtl[x].keys():
+                if y == 'map_Kd' or y == 'map_Ks':
+                    surf = pygame.image.load("models/textures/"+self.mtl[x][y])
+                    image = pygame.image.tostring(surf, 'RGBA', 1)
+                    ix, iy = surf.get_rect().size
+                    texid = self.mtl[x][y] = glGenTextures(1)
+                    glBindTexture(GL_TEXTURE_2D, texid)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                        GL_LINEAR)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                        GL_LINEAR)
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ix, iy, 0, GL_RGBA,
+                        GL_UNSIGNED_BYTE, image)
+                    glBindTexture(GL_TEXTURE_2D,0)
         work = self.groups
         if self.work_with_obj:
             work = self.objects
-
         for x in work.keys():
             obj = work[x]
             gl_list = glGenLists(1)
@@ -511,17 +528,30 @@ class OBJ:
             glDisable(GL_TEXTURE_2D)
             glEndList()
             obj.list = gl_list
+        self.loaded = True
+        global loading_objects
+        loading_objects -= 1
+        if self.onload != None:
+            self.onload()
     def getGroup(self, name):
+        if not self.loaded:
+            return None
         for x in self.groups.keys():
             if self.groups[x].name == name:
                 return self.groups[x]
         return None
     def getObject(self, name):
+        if not self.loaded:
+            return None
         for x in self.objects.keys():
             if self.objects[x].name == name:
                 return self.objects[x]
         return None
     def blit(self):
+        if not self.loaded:
+            if self.almost_loaded:
+                self.makeLists()
+            return
         glTranslatef(*self.pos)
         glRotatef(self.anglex,1,0,0)
         glRotatef(self.angley,0,1,0)
@@ -545,3 +575,16 @@ class OBJ:
         glRotatef(-self.angley,0,1,0)
         glRotatef(-self.anglex,1,0,0)
         glTranslatef(-self.pos[0],-self.pos[1],-self.pos[2])
+
+class Text2D(Object2D):
+    def __init__(self, x, y, text, size, color = (0,0,0), background = (0,0,0), font = None):
+        Object2D.__init__(self, x, y)
+        self.text = text
+        self.rendered = None
+        self.font = pygame.font.Font(font, size)
+        self.color = color
+        self.background = background
+        self.render()
+    def render(self):
+        print self.background
+        self.setSurface(self.font.render(self.text, 0, self.color, self.background))

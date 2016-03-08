@@ -8,6 +8,7 @@ from OGL import *
 import time
 from macros import *
 import math
+import OGL
 from test_gravitation import *
 from objects import enemy, player
 
@@ -37,11 +38,8 @@ class Base:
         #en2 = enemy.BasicEnemy(10,0,-20)
         #self.ogl.AddObject(en2, "Enemy","Enemy 2")
 
-        test2d = Object2D(20,20)
-        surface = pygame.Surface((100,100))
-        surface.fill((255,100,0))
-        test2d.setSurface(surface)
-        self.ogl.Add2D(test2d,"Test 2D")
+        self.loading = Text2D(20, 20, "Loading textures...", 35, (255,0,0))
+        self.ogl.Add2D(self.loading, "Loading")
 
         """py1 = PhysicObject(2.0,2.0,2.0,0.0,0.0,-50.0,10.0,(0,255,0),"object 1",self.ogl)
         py2 = PhysicObject(2.0,2.0,2.0,0.0,0.0,-70.0,10000.0,(255,0,0),"object 2",self.ogl)
@@ -68,6 +66,8 @@ class Base:
         if KEY(K_ESCAPE):
             self.on = False
 
+        if OGL.loading_objects == 0 and not self.loading.dead:
+            self.loading.dead = True
         glClearColor(0,0,0,1)
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         self.ogl.refresh()

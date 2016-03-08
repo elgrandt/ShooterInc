@@ -20,15 +20,17 @@ class SmithAndWesson(OGL.Cube):
         self.actual_rotation_y = 0.0
         self.actual_rotation_z = -25
         self.model = OGL.OBJ("Handgun_obj.obj",swapyz=False)
+        self.model.onload = self.OnModelLoad
         self.width, self.height, self.depth = self.model.width, self.model.height, self.model.depth
         self.model.angley = 180
+        self.colitions = []
+        self.before_mode = None
+        self.clicked = False
+    def OnModelLoad(self):
         self.barrel = self.model.getGroup("Cube.005_Cube.000_handgun")
         self.barrel.initial = 0,0,0
         self.barrel.max = -.3,0,0
         self.barrel.sign = 1
-        self.colitions = []
-        self.before_mode = None
-        self.clicked = False
     def logic(self):
         pressing2 = pygame.mouse.get_pressed()[2]
         if self.mode == "Standby":
