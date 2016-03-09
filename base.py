@@ -34,6 +34,12 @@ class Base:
 
         en1 = enemy.BasicEnemy(0,0,-20)
         self.ogl.AddObject(en1, "Enemy","Enemy 1")
+        en1 = enemy.BasicEnemy(0,0,20)
+        self.ogl.AddObject(en1, "Enemy","Enemy 2")
+        en1 = enemy.BasicEnemy(20,20,0)
+        self.ogl.AddObject(en1, "Enemy","Enemy 3")
+        en1 = enemy.BasicEnemy(0,-20,0)
+        self.ogl.AddObject(en1, "Enemy","Enemy 4")
 
         #en2 = enemy.BasicEnemy(10,0,-20)
         #self.ogl.AddObject(en2, "Enemy","Enemy 2")

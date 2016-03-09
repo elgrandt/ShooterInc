@@ -586,5 +586,4 @@ class Text2D(Object2D):
         self.background = background
         self.render()
     def render(self):
-        print self.background
         self.setSurface(self.font.render(self.text, 0, self.color, self.background))
