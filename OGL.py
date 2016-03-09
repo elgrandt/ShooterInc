@@ -334,6 +334,7 @@ def MTL(filename):
     try:
         open("models/"+filename,"r")
     except:
+        print "Error cargando el archivo",filename
         return {}
     for line in open("models/"+filename, "r"):
         if line.startswith('#'): continue
