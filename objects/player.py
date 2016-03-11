@@ -88,7 +88,7 @@ class Player(OGL.ComplexObject):
         OGL.ComplexObject.__init__(self,0,0,0)
         self.speed = .3
         self.angle = 0
-        self.angley = 0
+        self.angley = 90
         self.angle_speed = 0.1
         self.static_objects = []
         primary_weapon = SmithAndWesson()
@@ -110,7 +110,6 @@ class Player(OGL.ComplexObject):
             self.angley = 10
         if self.angley > 170:
             self.angley = 170
-        print self.angley
         #self.angle = 180
         #print self.angley
         pygame.mouse.set_pos(SSIZE()[0]/2,SSIZE()[1]/2)
