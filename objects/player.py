@@ -78,8 +78,8 @@ class SmithAndWesson(OGL.Cube):
         if not CLICK():
             self.clicked = False
 
-        self.rotationY -= self.actual_rotation_y
-        self.setRotationZ(self.actual_rotation_z)
+        #self.rotationY -= self.actual_rotation_y
+        #self.rotationZ += self.actual_rotation_z
     def blit(self):
         self.model.blit()
 
@@ -142,24 +142,44 @@ class Player(OGL.ComplexObject):
         #target_y = #self.y - plus_b 
         #target_z = #self.z - plus_c + plus_d
 
-        target_x , target_y , target_z = Point(self.angle , self.angley)
+        target_x , target_y , target_z = Point(self.angle , self.angley , 6)
+        nx , ny , nz = Point(self.angle - 10  , self.angley - 10  , 3)
+
         target_z = -target_z
         target_x = -target_x
         target_y = -target_y
+        nx = -nx
+        ny = -ny
+        nz = -nz
         gluLookAt( self.x , self.y , self.z , self.x + target_x , self.y + target_y , self.z + target_z, 0 , 1 , 0)
 
         for obj in self.static_objects:
             #xp = -obj.real_pos[2] * sin(radians(-self.angle)) + obj.real_pos[0] * cos(radians(-self.angle))
-            #yp = obj.real_pos[1] * cos(radians(-self.angley)) 
-            #zp = obj.real_pos[2] * cos(radians(-self.angle)) + obj.real_pos[0] * sin(radians(-self.angle))
+            #yp = obj.real_pos[1] * cos(radians(-self.angley))
+            #zp = obj.real_pos[2] * cos(radians(-self.angle)) * cos(radians(-self.angley)) + obj.real_pos[0] * sin(radians(-self.angle))
             #print xp, yp , zp
-            xp = self.x + target_x
-            yp = self.y + target_y
-            zp = self.z + target_z
+            xp = self.x + nx
+            yp = self.y + ny
+            zp = self.z + nz
+
             obj.setPos( xp, yp, zp)
-            obj.setRotationY(self.angle)
-            obj.setRotationX(self.angley)
-        #if CLICK():
+            #obj.setRotationX((self.angley * self.angle) % 360)
+            #obj.setRotationZ(self.angley)
+            #obj.setRotationY(self.angle)
+
+            a1 = atan2(target_z , target_x) * 180.0 / 3.141592 
+            a2 = atan2(target_z , target_y) * 180.0 / 3.141592 
+            obj.setRotationY( (-a1+180 + 360) % 360 )
+            obj.setRotationZ( (-a2-90 + 360) % 360 )
+            print (-a1+180 + 360) % 360 
+            print (-a2-90 + 360) % 360 
+                        #obj.setRotationY(0)
+            #obj.setRotationZ(0)
+            #print "a=",a1 
+            #if CLICK():
+            #obj.setRotationY( (-a1 + 360)%360 - 180 )
+            #obj.setRotationZ( (-a2 + 360)%360 - 180 )
+
         dist = 50
         pointing = self.x + sin(radians(self.angle)) * dist, self.y, self.z - cos(radians(self.angle)) * dist
         enemies = self.parent.QueryAllOfType("Enemy")
