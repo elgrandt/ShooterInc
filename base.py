@@ -20,7 +20,7 @@ class Base:
         pygame.display.set_mode((width ,height) , DOUBLEBUF|OPENGL)
         pygame.display.set_caption(caption)
         gluPerspective(45, (self.width/self.height), 0.1, 200.0)
-        glEnable(GL_LIGHTING)
+        #glEnable(GL_LIGHTING)
         glShadeModel(GL_SMOOTH)
         self.clock = pygame.time.Clock()
         self.FPS = 60
@@ -74,7 +74,7 @@ class Base:
 
         if OGL.loading_objects == 0 and not self.loading.dead:
             self.loading.dead = True
-        glClearColor(0,0,0,1)
+        glClearColor(1,1,1,1)
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         self.ogl.refresh()
         pygame.display.flip()

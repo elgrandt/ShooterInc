@@ -217,7 +217,7 @@ class Graphics:
         del self.objects2d[name]
     def refresh(self):
         gluPerspective(45, (SSIZE()[0]/SSIZE()[1]), 0.1, 200.0)
-        glEnable(GL_LIGHTING)
+        #glEnable(GL_LIGHTING)
         glEnable(GL_DEPTH_TEST)
         glShadeModel(GL_SMOOTH)
         glLightfv(GL_LIGHT0, GL_AMBIENT, (0,0,0,1))
@@ -228,7 +228,7 @@ class Graphics:
         for x in self.objects.keys():
             self.objects[x].refresh()
         glDisable(GL_DEPTH_TEST)
-        glDisable(GL_LIGHTING)
+        #glDisable(GL_LIGHTING)
         glMatrixMode(GL_PROJECTION)
         glPushMatrix()
         glOrtho(0.0, SSIZE()[0], SSIZE()[1], 0.0, -1.0, 10.0)

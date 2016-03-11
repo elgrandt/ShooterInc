@@ -105,11 +105,12 @@ class Player(OGL.ComplexObject):
         if self.angle > 180:
             self.angle = -180
         self.angley -= (MPOS()[1] - SSIZE()[1]/2) * self.angle_speed
-        if (self.angley < 0):
-            self.angley = 360
-        if self.angley > 360:
-            self.angley = 0
-        print self.angley
+        if (self.angley < -90):
+            self.angley = -90
+        if self.angley > 90:
+            self.angley = 90
+        self.angle = 180
+        #print self.angley
         pygame.mouse.set_pos(SSIZE()[0]/2,SSIZE()[1]/2)
         pygame.mouse.set_visible(False)
         if KEY(pygame.K_a):
@@ -119,21 +120,33 @@ class Player(OGL.ComplexObject):
             self.x += self.speed * cos(radians(self.angle))
             self.z -= self.speed * sin(radians(self.angle))
         if KEY(pygame.K_w):
-            self.x -= self.speed * sin(radians(self.angle))
-            self.z -= self.speed * cos(radians(self.angle))
+            if not KEY(pygame.K_SPACE):
+                self.x -= self.speed * sin(radians(self.angle))
+                self.z -= self.speed * cos(radians(self.angle))
+            else:
+                self.y += 0.1
         if KEY(pygame.K_s):
-            self.x += self.speed * sin(radians(self.angle))
-            self.z += self.speed * cos(radians(self.angle))
+            if not KEY(pygame.K_SPACE):
+                self.x += self.speed * sin(radians(self.angle))
+                self.z += self.speed * cos(radians(self.angle))
+            else:
+                self.y -= 0.1
+
         plus_a = 0#sin(radians(self.angle))
         plus_b = sin(radians(self.angley))
         plus_c = 0#cos(radians(self.angle))
         plus_d = cos(radians(self.angley))
+       
         gluLookAt( self.x , self.y , self.z , self.x - plus_a, self.y - plus_b , self.z - plus_c + plus_d, 0 , 1 , 0)
 
         for obj in self.static_objects:
-            obj.setPos( -obj.real_pos[2] * sin(radians(-self.angle)) + obj.real_pos[0] * cos(radians(-self.angle)), obj.real_pos[1], obj.real_pos[2] * cos(radians(-self.angle)) + obj.real_pos[0] * sin(radians(-self.angle)))
+            xp = -obj.real_pos[2] * sin(radians(-self.angle)) + obj.real_pos[0] * cos(radians(-self.angle))
+            yp = obj.real_pos[1] * cos(radians(-self.angley)) 
+            zp = obj.real_pos[2] * cos(radians(-self.angle)) + obj.real_pos[0] * sin(radians(-self.angle))
+            print xp, yp , zp
+            obj.setPos( xp, yp, zp)
             obj.setRotationY(self.angle)
-
+            obj.setRotationX(self.angley)
         #if CLICK():
         dist = 50
         pointing = self.x + sin(radians(self.angle)) * dist, self.y, self.z - cos(radians(self.angle)) * dist
