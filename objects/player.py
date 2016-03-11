@@ -92,7 +92,7 @@ class Player(OGL.ComplexObject):
         self.angle_speed = 0.1
         self.static_objects = []
         primary_weapon = SmithAndWesson()
-        #self.addObject(primary_weapon,"Primary Weapon")
+        self.addObject(primary_weapon,"Primary Weapon")
         self.static_objects.append(primary_weapon)
         pointer = OGL.Ellipsoid(.004,.004,.004,0,0,-1)
         pointer.setColor(0,0,255)
@@ -153,9 +153,9 @@ class Player(OGL.ComplexObject):
             #yp = obj.real_pos[1] * cos(radians(-self.angley)) 
             #zp = obj.real_pos[2] * cos(radians(-self.angle)) + obj.real_pos[0] * sin(radians(-self.angle))
             #print xp, yp , zp
-            xp = target_x
-            yp = target_y
-            zp = target_z
+            xp = self.x + target_x
+            yp = self.y + target_y
+            zp = self.z + target_z
             obj.setPos( xp, yp, zp)
             obj.setRotationY(self.angle)
             obj.setRotationX(self.angley)
@@ -168,6 +168,6 @@ class Player(OGL.ComplexObject):
         for en in enemies:
             start = -(en.x - en.width/2.0) , en.y - en.height/2.0 , en.z - en.depth/2.0
             end = -(en.x + en.width/2.0) , en.y + en.height/2.0 , en.z + en.depth/2.0
-            colition = shoot.EasyCollide([self.x,self.y,self.z],[target_x,target_y,target_z], start, end)
+            colition = shoot.EasyCollide([self.x,self.y,self.z],[self.x+target_x,self.y+target_y,self.z-target_z], start, end)
             if colition != False:
                 pointer.setColor(255,0,255)
