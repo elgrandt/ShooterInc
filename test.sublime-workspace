@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"end",
+				"end_prism"
+			],
+			[
+				"start",
+				"start_prism"
+			],
+			[
 				"or",
 				"order_a"
 			],
@@ -159,13 +167,6 @@
 	},
 	"buffers":
 	[
-		{
-			"settings":
-			{
-				"buffer_size": 0,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -289,8 +290,22 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+		"/home/newtonis/ShooterInc",
+		"/home/newtonis/ShooterInc/objects"
+	],
 	"file_history":
 	[
+		"/home/newtonis/ShooterInc/base.py",
+		"/home/newtonis/ShooterInc/objects/player.py",
+		"/home/newtonis/generator.py",
+		"/home/newtonis/generator.cpp",
+		"/home/newtonis/glassPrism.cpp",
+		"/home/newtonis/ShooterInc/shoot.py",
+		"/home/newtonis/ShooterInc/main.py",
+		"/home/newtonis/tests/out1.out",
+		"/home/newtonis/out.out",
 		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/635/B/aprog.cpp",
 		"/home/newtonis/.config/sublime-text-3/Packages/User/CF/dist/635/A/aprog.cpp",
 		"/home/newtonis/ballons/bal.cpp",
@@ -334,7 +349,7 @@
 	],
 	"find":
 	{
-		"height": 31.0
+		"height": 38.0
 	},
 	"find_in_files":
 	{
@@ -392,36 +407,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 0,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -458,7 +445,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 306.0
+		"height": 118.0
 	},
 	"output.find_results":
 	{
