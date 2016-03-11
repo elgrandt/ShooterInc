@@ -143,7 +143,7 @@ class Player(OGL.ComplexObject):
             xp = -obj.real_pos[2] * sin(radians(-self.angle)) + obj.real_pos[0] * cos(radians(-self.angle))
             yp = obj.real_pos[1] * cos(radians(-self.angley)) 
             zp = obj.real_pos[2] * cos(radians(-self.angle)) + obj.real_pos[0] * sin(radians(-self.angle))
-            print xp, yp , zp
+            #print xp, yp , zp
             obj.setPos( xp, yp, zp)
             obj.setRotationY(self.angle)
             obj.setRotationX(self.angley)
