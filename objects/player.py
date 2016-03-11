@@ -6,6 +6,7 @@ from OpenGL.GLU import *
 import pygame
 import shoot
 import config
+from formula import *
 
 class SmithAndWesson(OGL.Cube):
     def __init__(self):
@@ -91,7 +92,7 @@ class Player(OGL.ComplexObject):
         self.angle_speed = 0.1
         self.static_objects = []
         primary_weapon = SmithAndWesson()
-        self.addObject(primary_weapon,"Primary Weapon")
+        #self.addObject(primary_weapon,"Primary Weapon")
         self.static_objects.append(primary_weapon)
         pointer = OGL.Ellipsoid(.004,.004,.004,0,0,-1)
         pointer.setColor(0,0,255)
@@ -105,11 +106,12 @@ class Player(OGL.ComplexObject):
         if self.angle > 180:
             self.angle = -180
         self.angley -= (MPOS()[1] - SSIZE()[1]/2) * self.angle_speed
-        if (self.angley < -90):
-            self.angley = -90
-        if self.angley > 90:
-            self.angley = 90
-        self.angle = 180
+        if (self.angley < 10):
+            self.angley = 10
+        if self.angley > 170:
+            self.angley = 170
+        print self.angley
+        #self.angle = 180
         #print self.angley
         pygame.mouse.set_pos(SSIZE()[0]/2,SSIZE()[1]/2)
         pygame.mouse.set_visible(False)
@@ -132,18 +134,29 @@ class Player(OGL.ComplexObject):
             else:
                 self.y -= 0.1
 
-        plus_a = 0#sin(radians(self.angle))
-        plus_b = sin(radians(self.angley))
-        plus_c = 0#cos(radians(self.angle))
-        plus_d = cos(radians(self.angley))
-       
-        gluLookAt( self.x , self.y , self.z , self.x - plus_a, self.y - plus_b , self.z - plus_c + plus_d, 0 , 1 , 0)
+        #plus_a = sin(radians(self.angle))
+        #plus_b = 0#sin(radians(self.angley))
+        #plus_c = cos(radians(self.angle))
+        #plus_d = 0#cos(radians(self.angley))
+        
+        #target_x = #self.x - plus_a
+        #target_y = #self.y - plus_b 
+        #target_z = #self.z - plus_c + plus_d
+
+        target_x , target_y , target_z = Point(self.angle , self.angley)
+        target_z = -target_z
+        target_x = -target_x
+        target_y = -target_y
+        gluLookAt( self.x , self.y , self.z , self.x + target_x , self.y + target_y , self.z + target_z, 0 , 1 , 0)
 
         for obj in self.static_objects:
-            xp = -obj.real_pos[2] * sin(radians(-self.angle)) + obj.real_pos[0] * cos(radians(-self.angle))
-            yp = obj.real_pos[1] * cos(radians(-self.angley)) 
-            zp = obj.real_pos[2] * cos(radians(-self.angle)) + obj.real_pos[0] * sin(radians(-self.angle))
+            #xp = -obj.real_pos[2] * sin(radians(-self.angle)) + obj.real_pos[0] * cos(radians(-self.angle))
+            #yp = obj.real_pos[1] * cos(radians(-self.angley)) 
+            #zp = obj.real_pos[2] * cos(radians(-self.angle)) + obj.real_pos[0] * sin(radians(-self.angle))
             #print xp, yp , zp
+            xp = target_x
+            yp = target_y
+            zp = target_z
             obj.setPos( xp, yp, zp)
             obj.setRotationY(self.angle)
             obj.setRotationX(self.angley)
@@ -156,6 +169,6 @@ class Player(OGL.ComplexObject):
         for en in enemies:
             start = -(en.x - en.width/2.0) , en.y - en.height/2.0 , en.z - en.depth/2.0
             end = -(en.x + en.width/2.0) , en.y + en.height/2.0 , en.z + en.depth/2.0
-            colition = shoot.EasyCollide([self.x,self.y,self.z], pointing, start, end)
+            colition = shoot.EasyCollide([self.x,self.y,self.z],[target_x,target_y,target_z], start, end)
             if colition != False:
                 pointer.setColor(255,0,255)
