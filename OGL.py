@@ -297,7 +297,7 @@ class Cube(Object):
                 glVertex3fv(vertices[vertex])
 
         glEnd()
-
+        glLineWidth(2)
         glBegin(GL_LINES)
         for edge in edges:
             for vertex in edge:
