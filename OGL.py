@@ -4,10 +4,12 @@ __author__ = 'Dylan'
 from OpenGL.GL import *
 from OpenGL.GLU import *
 import math
+from math import *
 import pygame
 from macros import *
 import copy
 import threading
+import numpy as np
 
 loading_objects = 0
 

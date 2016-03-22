@@ -143,7 +143,7 @@ class Player(OGL.ComplexObject):
         #target_z = #self.z - plus_c + plus_d
 
         target_x , target_y , target_z = Point(self.angle , self.angley , 6)
-        nx , ny , nz = Point(self.angle - 10  , self.angley - 10  , 3)
+        nx , ny , nz = Point(self.angle - 0  , self.angley - 0  , 3)
 
         target_z = -target_z
         target_x = -target_x
@@ -169,16 +169,8 @@ class Player(OGL.ComplexObject):
 
             a1 = atan2(target_z , target_x) * 180.0 / 3.141592 
             a2 = atan2(target_z , target_y) * 180.0 / 3.141592 
-            obj.setRotationY( (-a1+180 + 360) % 360 )
-            obj.setRotationZ( (-a2-90 + 360) % 360 )
-            print (-a1+180 + 360) % 360 
-            print (-a2-90 + 360) % 360 
-                        #obj.setRotationY(0)
-            #obj.setRotationZ(0)
-            #print "a=",a1 
-            #if CLICK():
-            #obj.setRotationY( (-a1 + 360)%360 - 180 )
-            #obj.setRotationZ( (-a2 + 360)%360 - 180 )
+            obj.setRotationY( (-a1 - 90 + 270) % 360 )
+            obj.setRotationX( (360 - (-a2-90) ) % 360 )
 
         dist = 50
         pointing = self.x + sin(radians(self.angle)) * dist, self.y, self.z - cos(radians(self.angle)) * dist
