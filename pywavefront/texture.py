@@ -32,7 +32,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
-from pyglet.gl import *
+from OpenGL.GL import *
+import pygame
 
 class Texture(object):
     def __init__(self, path):
@@ -40,23 +41,37 @@ class Texture(object):
         # we only need the file name, since pyglet takes care of path lookups
         self.image_name = path
 
-        self.image = pyglet.resource.image(self.image_name).texture
+        self.image = pygame.image.load(self.image_name)
+        self.image = self.generateTexture(self.image)
 
         self.verify_dimensions()
 
+    def generateTexture(self,surface):
+        textureData = pygame.image.tostring(surface, "RGBA", 1)
+        width = surface.get_width()
+        height = surface.get_height()
+
+        texture = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, texture)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+
+        return texture
     def draw(self):
-        glEnable(self.image.target)
-        glBindTexture(self.image.target, self.image.id)
-        gl.glTexParameterf(self.image.target,
-                gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP)
-        gl.glTexParameterf(self.image.target,
-                gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP)
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.image)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
 
     def verify_dimensions(self):
         self.verify('width')
         self.verify('height')
 
     def verify(self, dimension):
+        return
         value = self.image.__getattribute__(dimension)
         while value > 1:
             div_float = float(value) / 2.0

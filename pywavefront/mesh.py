@@ -32,7 +32,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
-from pyglet.gl import *
+from OpenGL.GL import *
+import os
 
 class Mesh(object):
     """This is a basic mesh for drawing using OpenGL. Interestingly, it does

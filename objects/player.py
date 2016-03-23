@@ -27,7 +27,9 @@ class SmithAndWesson(OGL.Cube):
         self.colitions = []
         self.before_mode = None
         self.clicked = False
+        self.initialized = False
     def OnModelLoad(self):
+        self.initialized = True
         self.barrel = self.model.getGroup("Cube.005_Cube.000_handgun")
         self.barrel.initial = 0,0,0
         self.barrel.max = -.3,0,0
@@ -63,6 +65,8 @@ class SmithAndWesson(OGL.Cube):
                 self.mode = "Standby"
                 self.real_pos = self.standby_pos[:]
         if self.mode == "Shoot animation":
+            if not self.initialized:
+                return
             self.barrel.pos[0] += (self.barrel.max[0] - self.barrel.initial[0]) / self.shoot_animation * self.barrel.sign
             if abs(self.barrel.pos[0]) < 0.00001:
                 self.barrel.pos[0] = 0

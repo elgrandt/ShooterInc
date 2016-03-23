@@ -32,7 +32,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
-from pyglet.gl import *
+from OpenGL.GL import *
 
 import pywavefront.parser as parser
 import pywavefront.texture as texture
@@ -90,17 +90,18 @@ class Material(object):
         return (GLfloat * 4)(*(lighting))
 
     def draw(self, face=GL_FRONT_AND_BACK):
-        if self.texture:
-            self.texture.draw()
-        else:
-            glDisable(GL_TEXTURE_2D)
 
+        glColor4f(1,1,1,1)
         glMaterialfv(face, GL_DIFFUSE, self.gl_light(self.diffuse) )
         glMaterialfv(face, GL_AMBIENT, self.gl_light(self.ambient) )
         glMaterialfv(face, GL_SPECULAR, self.gl_light(self.specular) )
         glMaterialfv(face, GL_EMISSION, self.gl_light(self.emissive) )
         glMaterialf(face, GL_SHININESS, self.shininess)
 
+        if self.texture:
+            self.texture.draw()
+        else:
+            glDisable(GL_TEXTURE_2D)
         if self.gl_floats is None:
             self.gl_floats = (GLfloat * len(self.vertices))(*self.vertices)
             self.triangle_count = len(self.vertices) / 8

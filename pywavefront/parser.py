@@ -32,15 +32,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
-import pyglet
-
 class Parser(object):
     """This defines a generalized parse dispatcher; all parse functions
     reside in subclasses."""
 
     def read_file(self, file_name):
-        for line in pyglet.resource.file(file_name):
-            self.parse(line)
+        try:
+            with open(file_name) as f:
+                for line in f.readlines():
+                    self.parse(line)
+        except:
+            return
 
     def parse(self, line):
         """Determine what type of line we are and dispatch
