@@ -3,8 +3,7 @@ from oauthlib.oauth2.rfc6749.clients import backend_application
 __author__ = 'Dylan'
 from OpenGL.GL import *
 from OpenGL.GLU import *
-import math
-from math import *
+from math import cos, sin, radians
 import pygame
 from macros import *
 import copy
@@ -35,6 +34,7 @@ class Object:
         self.manualColor    = False
         self.manualFill     = False
         self.parent = None
+        self.localRotation = True
     def setParent(self,parent):
         self.parent = parent
     def setX(self,x):
@@ -55,6 +55,8 @@ class Object:
         self.color = (r/255.0,g/255.0,b/255.0)
     def setFilled(self, is_filled):
         self.filled = is_filled
+    def setGlobalRotation(self):
+        self.localRotation = False
     def blit(self):
         ### Should be replaced with the heritage's blit function ###
         pass
@@ -69,12 +71,17 @@ class Object:
             if not self.manualPosition:
                 glTranslatef(self.x,self.y,self.z)
             if not self.manualRotation:
+                rotX, rotY, rotZ = 0,0,0
                 if self.rotationX != False:
-                    glRotatef(self.rotationX,1,0,0)
+                    rotX = self.rotationX
                 if self.rotationY != False:
-                    glRotatef(self.rotationY,0,1,0)
+                    rotY = self.rotationY
                 if self.rotationZ != False:
-                    glRotatef(self.rotationZ,0,0,1)
+                    rotZ = self.rotationZ
+                if self.localRotation:
+                    rotateLocalAxis(rotX, rotY, rotZ)
+                else:
+                    rotateGlobalAxis(rotX, rotY, rotZ)
             if not self.manualColor:
                 if self.color != False:
                     glColor3fv(self.color)
@@ -322,8 +329,8 @@ class Ellipsoid(Object):
             glBegin(GL_TRIANGLE_STRIP)
             s = -Pi
             while (s <= Pi+.0001):
-                glVertex3f(self.width * math.cos(t) * math.cos(s), self.height * math.cos(t) * math.sin(s), self.depth * math.sin(t))
-                glVertex3f(self.width * math.cos(t+tStep) * math.cos(s), self.height * math.cos(t+tStep) * math.sin(s), self.depth * math.sin(t+tStep))
+                glVertex3f(self.width * cos(t) * cos(s), self.height * cos(t) * sin(s), self.depth * sin(t))
+                glVertex3f(self.width * cos(t+tStep) * cos(s), self.height * cos(t+tStep) * sin(s), self.depth * sin(t+tStep))
                 s += sStep
             glEnd()
             t += tStep
@@ -590,3 +597,69 @@ class Text2D(Object2D):
         self.render()
     def render(self):
         self.setSurface(self.font.render(self.text, 0, self.color, self.background))
+
+class Quaternion:
+    def __init__(self, x=0, y=0, z=0, w=0):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.w = w
+    def Generate(self, angle, x_axis, y_axis, z_axis):
+        sinA = sin(radians(angle)/2)
+        cosA = cos(radians(angle)/2)
+        self.x = x_axis * sinA
+        self.y = y_axis * sinA
+        self.z = z_axis * sinA
+        self.w = cosA
+        self.Normalize(self)
+    def Magnitude(self):
+        return sqrt(self.w * self.w + self.x * self.x + self.y * self.y + self.z * self.z)
+    def Normalize(self, quat):
+        mag = quat.Magnitude()
+        quat.x = quat.x/mag
+        quat.y = quat.y/mag
+        quat.z = quat.z/mag
+        quat.w = quat.w/mag
+    def __mul__(self, other):
+        ret = [0,0,0,0]
+        ret[0] = self.w*other.x - self.z*other.y + self.y*other.z + self.x*other.w
+        ret[1] = self.z*other.x + self.w*other.y - self.x*other.z + self.y*other.w
+        ret[2] = -self.y*other.x + self.x*other.y + self.w*other.z + self.z*other.w
+        ret[3] = -self.x*other.x - self.y*other.y - self.z*other.z + self.w*other.w
+        return Quaternion(*ret)
+    def GetMatrix(self):
+        """
+            |       2     2                                |
+            | 1 - 2Y  - 2Z    2XY - 2ZW      2XZ + 2YW     |
+            |                                              |
+            |                       2     2                |
+        M = | 2XY + 2ZW       1 - 2X  - 2Z   2YZ - 2XW     |
+            |                                              |
+            |                                      2     2 |
+            | 2XZ - 2YW       2YZ + 2XW      1 - 2X  - 2Y  |
+            |                                              |
+        """
+        X,Y,Z,W = self.x, self.y, self.z, self.w
+        matrix = np.array([
+            [1 - 2 * Y * Y - 2 * Z * Z, 2 * X * Y - 2 * Z * W    , 2 * X * Z + 2 * Y * W    , 0],
+            [2 * X * Y + 2 * Z * W    , 1 - 2 * X * X - 2 * Z * Z, 2 * Y * Z - 2 * X * W    , 0],
+            [2 * X * Z - 2 * Y * W    , 2 * Y * Z + 2 * X * W    , 1 - 2 * X * X - 2 * Y * Y, 0],
+            [0                        , 0                        , 0                        , 1]
+        ])
+        return matrix
+
+def rotateLocalAxis(rX, rY, rZ):
+    quaX = Quaternion()
+    quaX.Generate(rX,1,0,0)
+    quaY = Quaternion()
+    quaY.Generate(rY,0,1,0)
+    #quaZ = Quaternion()
+    #quaZ.Generate(rZ,0,0,1)
+    mult = quaX * quaY
+    glMultMatrixf(mult.GetMatrix())
+    glRotate(rZ,0,0,1)
+
+def rotateGlobalAxis(rX, rY, rZ):
+    glRotate(rX, 1, 0, 0)
+    glRotate(rY, 0, 1, 0)
+    glRotate(rZ, 0, 0, 1)
