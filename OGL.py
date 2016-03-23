@@ -599,6 +599,10 @@ class Text2D(Object2D):
         self.setSurface(self.font.render(self.text, 0, self.color, self.background))
 
 class Quaternion:
+    """
+    Class based on things learnt in this page:
+    http://www.flipcode.com/documents/matrfaq.html
+    """
     def __init__(self, x=0, y=0, z=0, w=0):
         self.x = x
         self.y = y
