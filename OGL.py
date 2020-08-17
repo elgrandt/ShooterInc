@@ -1,4 +1,4 @@
-from oauthlib.oauth2.rfc6749.clients import backend_application
+#from oauthlib.oauth2.rfc6749.clients import backend_application
 
 __author__ = 'Dylan'
 from OpenGL.GL import *
@@ -226,7 +226,7 @@ class Graphics:
         del self.objects2d[name]
     def refresh(self):
         gluPerspective(45, (SSIZE()[0]/SSIZE()[1]), 0.1, 200.0)
-        #glEnable(GL_LIGHTING)
+        glEnable(GL_LIGHTING)
         glEnable(GL_DEPTH_TEST)
         glShadeModel(GL_SMOOTH)
         glLightfv(GL_LIGHT0, GL_AMBIENT, (0,0,0,1))
@@ -237,7 +237,7 @@ class Graphics:
         for x in self.objects.keys():
             self.objects[x].refresh()
         glDisable(GL_DEPTH_TEST)
-        #glDisable(GL_LIGHTING)
+        glDisable(GL_LIGHTING)
         glMatrixMode(GL_PROJECTION)
         glPushMatrix()
         glOrtho(0.0, SSIZE()[0], SSIZE()[1], 0.0, -1.0, 10.0)
@@ -343,7 +343,7 @@ def MTL(filename):
     try:
         open("models/"+filename,"r")
     except:
-        print "Error cargando el archivo",filename
+        print ("Error cargando el archivo",filename)
         return {}
     for line in open("models/"+filename, "r"):
         if line.startswith('#'): continue
@@ -353,7 +353,7 @@ def MTL(filename):
             mtl = contents[values[1]] = {}
             contents['objects'].append(values[1])
         elif mtl is None:
-            raise ValueError, "mtl file doesn't start with newmtl stmt"
+            raise (ValueError, "mtl file doesn't start with newmtl stmt")
         elif values[0] == 'map_Kd' or values[0] == 'map_Ks':
             # load the texture referred to by this declaration
             contents['map_Kd'] = True

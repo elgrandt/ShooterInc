@@ -20,7 +20,7 @@ class Base:
         pygame.display.set_mode((width ,height) , DOUBLEBUF|OPENGL)
         pygame.display.set_caption(caption)
         gluPerspective(45, (self.width/self.height), 0.1, 200.0)
-        #glEnable(GL_LIGHTING)
+        glEnable(GL_LIGHTING)
         glShadeModel(GL_SMOOTH)
         self.clock = pygame.time.Clock()
         self.FPS = 60

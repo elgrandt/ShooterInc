@@ -35,24 +35,40 @@
 import pywavefront.material
 import pywavefront.mesh
 import pywavefront.parser
+import os
+import threading
+import copy
+from OpenGL.GL import *
 
 class PywavefrontException(Exception):
     pass
 
 class Wavefront(object):
     """Import a wavefront .obj file."""
-    def __init__(self, file_name, path = "", scale = 10):
+    def __init__(self, file_name, path = "", scale = 1):
         self.file_name = path + file_name
 
         self.materials = {}
         self.meshes = {}        # Name mapping
         self.mesh_list = []     # Also includes anonymous meshes
 
-        ObjParser(self, self.file_name, path, scale)
+        self.scale = scale
+        self.onload = None
 
+        self.loading = True
+        load_thread = threading.Thread(target=ObjParser, name = "ObjectLoad", args=[self, self.file_name, path])
+        load_thread.start()
+    def get_mesh(self, name):
+        if name in self.meshes:
+            return self.meshes[name]
+        else:
+            print "No", name, "in meshes"
+            print self.meshes
     def draw(self):
-        for this_mesh in self.mesh_list:
-            this_mesh.draw()
+        if not self.loading:
+            glScale(self.scale,self.scale,self.scale)
+            for this_mesh in self.mesh_list:
+                this_mesh.draw()
 
     def add_mesh(self, the_mesh):
         self.mesh_list.append(the_mesh)
@@ -61,7 +77,7 @@ class Wavefront(object):
 
 class ObjParser(parser.Parser):
     """This parser parses lines from .obj files."""
-    def __init__(self, wavefront, file_name, path, scale):
+    def __init__(self, wavefront, file_name, path):
         # unfortunately we can't escape from external effects on the
         # wavefront object
         self.wavefront = wavefront
@@ -71,12 +87,14 @@ class ObjParser(parser.Parser):
         self.normals = [[0., 0., 0.]]
         self.tex_coords = [[0., 0.]]
         self.path = path
-        self.scale = scale
         self.read_file(file_name)
+        self.wavefront.loading = False
+        if self.wavefront.onload != None:
+            self.wavefront.onload()
 
     # methods for parsing types of wavefront lines
     def parse_v(self, args):
-        self.vertices.append(map(lambda x: x/self.scale, list(map(float, args[0:3]))))
+        self.vertices.append(list(map(float, args[0:3])))
 
     def parse_vn(self, args):
         self.normals.append(list(map(float, args[0:3])))
@@ -86,13 +104,15 @@ class ObjParser(parser.Parser):
 
     def parse_mtllib(self, args):
         [mtllib] = args
+        if not os.path.exists(self.path + mtllib):
+            return
         materials = material.MaterialParser(self.path+mtllib, self.path).materials
         for material_name, material_object in materials.items():
             self.wavefront.materials[material_name] = material_object
 
     def parse_usemtl(self, args):
         [usemtl] = args
-        self.material = self.wavefront.materials.get(usemtl, None)
+        self.material = copy.copy(self.wavefront.materials.get(usemtl, None))
         if self.material is None:
             raise PywavefrontException('Unknown material: %s' % args[0])
         if self.mesh is not None:
@@ -107,6 +127,7 @@ class ObjParser(parser.Parser):
         self.wavefront.add_mesh(self.mesh)
 
     def parse_f(self, args):
+        self.material = copy.copy(self.wavefront.materials.get(self.material.name,None))
         if (len(self.tex_coords) > 1) and (len(self.normals) == 1): 
             # does the spec allow for texture coordinates without normals?
             # if we allow this condition, the user will get a black screen
@@ -117,7 +138,7 @@ class ObjParser(parser.Parser):
             self.mesh = mesh.Mesh()
             self.wavefront.add_mesh(self.mesh)
         if self.material is None:
-            self.material = material.Material()
+            self.material = material.Material("default")
         self.mesh.add_material(self.material)
 
         # For fan triangulation, remember first and latest vertices

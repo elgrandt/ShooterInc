@@ -33,7 +33,6 @@
 # ----------------------------------------------------------------------------
 
 from OpenGL.GL import *
-import os
 
 class Mesh(object):
     """This is a basic mesh for drawing using OpenGL. Interestingly, it does
@@ -42,6 +41,8 @@ class Mesh(object):
     def __init__(self, name=''):
         self.name = name
         self.materials = []
+        self.pos = [0,0,0]
+        self.visible = True
 
     def has_material(self, new_material):
         """Determine whether we already have a material of this name."""
@@ -55,11 +56,16 @@ class Mesh(object):
         self.materials.append(material)
 
     def draw(self):
+        if not self.visible:
+            return
         glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
         glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_LIGHTING_BIT)
         glEnable(GL_CULL_FACE)
         glCullFace(GL_BACK)
+        glTranslatef(*self.pos)
+        glEnable(GL_TEXTURE_2D)
         for material in self.materials:
             material.draw()
+        glDisable(GL_TEXTURE_2D)
         glPopAttrib()
         glPopClientAttrib()

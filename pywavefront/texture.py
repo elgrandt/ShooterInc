@@ -42,10 +42,6 @@ class Texture(object):
         self.image_name = path
 
         self.image = pygame.image.load(self.image_name)
-        self.image = self.generateTexture(self.image)
-
-        self.verify_dimensions()
-
     def generateTexture(self,surface):
         textureData = pygame.image.tostring(surface, "RGBA", 1)
         width = surface.get_width()
@@ -53,31 +49,13 @@ class Texture(object):
 
         texture = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, texture)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+        glBindTexture(GL_TEXTURE_2D,0)
 
         return texture
     def draw(self):
-        glEnable(GL_TEXTURE_2D)
+        if type(self.image) == pygame.Surface:
+            self.image = self.generateTexture(self.image)
         glBindTexture(GL_TEXTURE_2D, self.image)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-
-    def verify_dimensions(self):
-        self.verify('width')
-        self.verify('height')
-
-    def verify(self, dimension):
-        return
-        value = self.image.__getattribute__(dimension)
-        while value > 1:
-            div_float = float(value) / 2.0
-            div_int = int(div_float)
-            if not (div_float == div_int):
-                raise Exception('image %s is %d, which is not a power of 2'%(
-                        dimension, self.image.__getattribute__(dimension) ))
-            value = div_int
-

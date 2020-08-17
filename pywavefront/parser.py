@@ -31,18 +31,17 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+import os
 
 class Parser(object):
     """This defines a generalized parse dispatcher; all parse functions
     reside in subclasses."""
 
     def read_file(self, file_name):
-        try:
+        if os.path.exists(file_name):
             with open(file_name) as f:
                 for line in f.readlines():
                     self.parse(line)
-        except:
-            return
 
     def parse(self, line):
         """Determine what type of line we are and dispatch
@@ -60,7 +59,6 @@ class Parser(object):
         for arg in args:
            args[i] = arg.decode("utf-8")
            i += 1
-
         if ('parse_%s'%line_type in dir(self)):
             parse_function = getattr(self, 'parse_%s' % line_type)
             parse_function(args)

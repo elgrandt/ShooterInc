@@ -91,6 +91,7 @@ class Material(object):
 
     def draw(self, face=GL_FRONT_AND_BACK):
 
+        glEnable(GL_TEXTURE_2D)
         glColor4f(1,1,1,1)
         glMaterialfv(face, GL_DIFFUSE, self.gl_light(self.diffuse) )
         glMaterialfv(face, GL_AMBIENT, self.gl_light(self.ambient) )
@@ -100,13 +101,12 @@ class Material(object):
 
         if self.texture:
             self.texture.draw()
-        else:
-            glDisable(GL_TEXTURE_2D)
         if self.gl_floats is None:
             self.gl_floats = (GLfloat * len(self.vertices))(*self.vertices)
             self.triangle_count = len(self.vertices) / 8
         glInterleavedArrays(GL_T2F_N3F_V3F, 0, self.gl_floats)
         glDrawArrays(GL_TRIANGLES, 0, int(self.triangle_count))
+        glDisable(GL_TEXTURE_2D)
 
 class MaterialParser(parser.Parser):
     """Object to parse lines of a materials definition file."""
